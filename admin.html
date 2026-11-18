@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel - MediaHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-zinc-950 text-white min-h-screen py-8 px-4">
+
+  <!-- LOGIN BOX -->
+  <div id="loginBox" class="max-w-sm mx-auto mt-16 bg-zinc-900 border border-zinc-800 p-6 rounded-xl space-y-4">
+    <h1 class="text-xl font-bold text-center text-amber-400">Admin Login</h1>
+    <p id="authError" class="hidden text-xs text-red-400 bg-red-950 p-2 rounded"></p>
+    <input id="adminEmail" type="email" placeholder="Admin Email" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm" />
+    <input id="adminPass" type="password" placeholder="Password" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm" />
+    <button onclick="loginAdmin()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-2.5 rounded-lg text-sm">Sign In</button>
+  </div>
+
+  <!-- ADMIN DASHBOARD (Hidden until logged in) -->
+  <div id="dashboardBox" class="hidden max-w-4xl mx-auto space-y-6">
+    <div class="flex items-center justify-between bg-zinc-900 border border-zinc-800 px-5 py-4 rounded-xl">
+      <span class="font-bold text-amber-400">MediaHub Admin Studio</span>
+      <button onclick="logoutAdmin()" class="text-xs bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 rounded-lg">Logout</button>
+    </div>
+
+    <!-- Upload Form -->
+    <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl space-y-4">
+      <h2 class="text-lg font-bold">Add Movie / Series & Links</h2>
+      <p id="statusMsg" class="hidden text-xs bg-emerald-950 border border-emerald-700 text-emerald-300 p-3 rounded-lg"></p>
+
+      <div class="flex gap-2">
+        <input id="title" type="text" placeholder="Movie / Series Title" class="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm" />
+        <button type="button" onclick="autofillTMDB()" class="bg-zinc-800 hover:bg-zinc-700 text-amber-400 text-xs font-bold px-3 py-2 rounded-lg border border-zinc-700">✨ Auto-Fill</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <input id="year" type="number" value="2026" placeholder="Year" class="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm" />
+        <input id="genre" type="text" placeholder="Genres (Action, Sci-Fi)" class="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm" />
+        <input id="language" type="text" value="Dual Audio [Hindi + English]" placeholder="Language" class="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm" />
+      </div>
+
+      <input id="poster" type="url" placeholder="Poster Image URL (https://...)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm" />
+      <input id="screenshots" type="text" placeholder="Screenshot URLs (comma separated)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm" />
+      <textarea id="synopsis" rows="3" placeholder="Storyline / Synopsis" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm"></textarea>
+
+      <!-- Links Builder -->
+      <div class="pt-3 border-t border-zinc-800 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-semibold">Download & Stream Links</span>
+          <button type="button" onclick="addLinkRow()" class="text-xs bg-zinc-800 px-3 py-1 rounded">+ Add Quality</button>
+        </div>
+        <div id="linksContainer" class="space-y-2"></div>
+      </div>
+
+      <button onclick="publishMovie()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-lg text-sm">Publish to Website</button>
+    </div>
+
+    <!-- Recent Uploads List -->
+    <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl">
+      <h2 class="text-sm font-bold uppercase text-zinc-400 mb-3">Recent Uploads</h2>
+      <div id="recentList" class="space-y-2"></div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://hqchlnsccvwbtzyrckfo.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_FnbkRZ3n8a1EaQQTeRcpmw_5HsevpHX';
+    const TMDB_API_KEY = 'YOUR_TMDB_API_KEY'; // Optional
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    db.auth.getSession().then(({ data: { session } }) => {
+      if (session) showDashboard();
+    });
+
+    async function loginAdmin() {
+      const email = document.getElementById('adminEmail').value;
+      const password = document.getElementById('adminPass').value;
+      const { error } = await db.auth.signInWithPassword({ email, password });
+      if (error) {
+        const errEl = document.getElementById('authError');
+        errEl.textContent = error.message;
+        errEl.classList.remove('hidden');
+      } else {
+        showDashboard();
+      }
+    }
+
+    async function logoutAdmin() {
+      await db.auth.signOut();
+      location.reload();
+    }
+
+    function showDashboard() {
+      document.getElementById('loginBox').classList.add('hidden');
+      document.getElementById('dashboardBox').classList.remove('hidden');
+      if (document.getElementById('linksContainer').children.length === 0) {
+        addLinkRow('720p', '950 MB');
+        addLinkRow('1080p', '2.2 GB');
+      }
+      loadRecent();
+    }
+
+    function addLinkRow(q = '', size = '') {
+      const div = document.createElement('div');
+      div.className = 'link-row grid grid-cols-1 sm:grid-cols-12 gap-2 bg-zinc-950 p-2.5 rounded-lg border border-zinc-800';
+      div.innerHTML = `
+        <input type="text" value="${q}" placeholder="Quality (720p)" class="q-input sm:col-span-2 bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-xs" />
+        <input type="text" value="${size}" placeholder="Size (1.2 GB)" class="s-input sm:col-span-2 bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-xs" />
+        <input type="url" placeholder="Download URL" class="d-input sm:col-span-4 bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-xs" />
+        <input type="url" placeholder="Stream URL (Optional)" class="st-input sm:col-span-3 bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-xs" />
+        <button type="button" onclick="this.parentElement.remove()" class="sm:col-span-1 text-red-400 text-xs font-bold">✕</button>
+      `;
+      document.getElementById('linksContainer').appendChild(div);
+    }
+
+    async function autofillTMDB() {
+      const title = document.getElementById('title').value.trim();
+      if (!title || !TMDB_API_KEY || TMDB_API_KEY === 'YOUR_TMDB_API_KEY') {
+        alert('Enter a title and make sure TMDB_API_KEY is set.');
+        return;
+      }
+      const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(title)}`);
+      const data = await res.json();
+      const match = data.results?.[0];
+      if (!match) return alert('No match found.');
+
+      document.getElementById('title').value = match.title || match.name || title;
+      const date = match.release_date || match.first_air_date || '';
+      if (date) document.getElementById('year').value = date.split('-')[0];
+      if (match.overview) document.getElementById('synopsis').value = match.overview;
+      if (match.poster_path) document.getElementById('poster').value = `https://image.tmdb.org/t/p/w500${match.poster_path}`;
+    }
+
+    async function publishMovie() {
+      const title = document.getElementById('title').value.trim();
+      const year = Number(document.getElementById('year').value);
+      const genre = document.getElementById('genre').value.trim();
+      const language = document.getElementById('language').value.trim();
+      const poster_url = document.getElementById('poster').value.trim();
+      const synopsis = document.getElementById('synopsis').value.trim();
+      const screenshots = document.getElementById('screenshots').value.split(',').map(s => s.trim()).filter(Boolean);
+
+      if (!title || !poster_url) return alert('Title and Poster URL are required.');
+
+      const slug = `${title}-${year}-${Date.now().toString().slice(-4)}`
+        .toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+      const { data: movie, error } = await db
+        .from('movies')
+        .insert([{ title, slug, release_year: year, genre, language, poster_url, synopsis, screenshots }])
+        .select().single();
+
+      if (error) return alert('Error: ' + error.message);
+
+      const rows = Array.from(document.querySelectorAll('.link-row')).map(row => ({
+        movie_id: movie.id,
+        quality: row.querySelector('.q-input').value.trim(),
+        file_size: row.querySelector('.s-input').value.trim(),
+        file_key: row.querySelector('.d-input').value.trim(),
+        stream_url: row.querySelector('.st-input').value.trim() || null
+      })).filter(l => l.file_key);
+
+      if (rows.length > 0) {
+        await db.from('download_links').insert(rows);
+      }
+
+      const msg = document.getElementById('statusMsg');
+      msg.textContent = `Published "${title}" successfully!`;
+      msg.classList.remove('hidden');
+
+      document.getElementById('title').value = '';
+      document.getElementById('poster').value = '';
+      document.getElementById('synopsis').value = '';
+      document.getElementById('screenshots').value = '';
+      loadRecent();
+    }
+
+    async function loadRecent() {
+      const { data } = await db.from('movies').select('id, title, release_year').order('created_at', { ascending: false }).limit(15);
+      document.getElementById('recentList').innerHTML = (data || []).map(m => `
+        <div class="flex items-center justify-between bg-zinc-950 px-3 py-2 rounded border border-zinc-800 text-xs">
+          <span>${m.title} (${m.release_year})</span>
+          <button onclick="deleteMovie('${m.id}')" class="text-red-400 hover:underline">Delete</button>
+        </div>
+      `).join('');
+    }
+
+    async function deleteMovie(id) {
+      if (!confirm('Delete this entry?')) return;
+      await db.from('movies').delete().eq('id', id);
+      loadRecent();
+    }
+  </script>
+</body>
+</html>
