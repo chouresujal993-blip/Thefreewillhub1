@@ -10,13 +10,84 @@
 <body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col">
 
   <!-- Header & Search -->
-  <header class="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-30">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+  <header class="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-3">
       <a href="#" onclick="showHome(); return false;" class="text-2xl font-extrabold tracking-tight">
         THEFREEWILL<span class="text-amber-500">HUB</span>
       </a>
 
-      <div class="w-full sm:w-80 flex items-center gap-2">
+      <!-- TOP-RIGHT CORNER ADMIN TRIGGER -->
+      <div class="relative order-2 sm:order-3">
+        <button
+          id="adminCornerBtn"
+          onclick="toggleAdminCorner()"
+          class="bg-zinc-950 hover:bg-zinc-800 text-amber-400 border border-zinc-700 px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition"
+        >
+          <span>🔐</span>
+          <span id="cornerBtnLabel">Admin Login</span>
+        </button>
+
+        <!-- Dropdown Window in Top-Right Corner -->
+        <div id="adminCornerWindow" class="hidden absolute right-0 mt-2 w-[90vw] max-w-sm bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl overflow-hidden z-50">
+          <div class="bg-zinc-950 px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400">🔐 Admin Corner</span>
+            <button onclick="toggleAdminCorner()" class="text-zinc-400 hover:text-white text-sm font-bold px-1.5">✕</button>
+          </div>
+
+          <!-- Corner Login Form -->
+          <div id="cornerLoginBox" class="p-4 space-y-3">
+            <p id="cornerAuthError" class="hidden text-xs text-red-400 bg-red-950/80 border border-red-800 p-2 rounded"></p>
+            <input id="cornerEmail" type="email" placeholder="Admin Email" class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 rounded-lg px-3 py-2 text-xs text-white outline-none" />
+            <input id="cornerPass" type="password" placeholder="Admin Password" class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 rounded-lg px-3 py-2 text-xs text-white outline-none" />
+            <button onclick="cornerLogin()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-2 rounded-lg text-xs">
+              Sign In
+            </button>
+          </div>
+
+          <!-- Corner Quick Upload Form -->
+          <div id="cornerUploadBox" class="hidden p-4 space-y-2.5 max-h-[78vh] overflow-y-auto">
+            <div class="flex items-center justify-between text-[11px] text-emerald-400 bg-emerald-950/60 border border-emerald-800/70 px-2.5 py-1.5 rounded">
+              <span>● Logged in as Admin</span>
+              <button onclick="cornerLogout()" class="text-zinc-300 underline">Logout</button>
+            </div>
+
+            <p id="cornerStatus" class="hidden text-xs text-emerald-300 bg-emerald-950 p-2 rounded"></p>
+
+            <input id="cTitle" type="text" placeholder="Title (Movie, Series, or Video)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+            <div class="grid grid-cols-2 gap-2">
+              <input id="cYear" type="number" value="2026" placeholder="Year" class="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+              <input id="cGenre" type="text" placeholder="Category (Movies, YouTube...)" class="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+            </div>
+            <input id="cLanguage" type="text" value="Hindi" placeholder="Language (Hindi, Dual Audio...)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+
+            <!-- Poster Upload from Device OR Image URL -->
+            <div class="bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-semibold text-zinc-300">Movie / Video Poster</span>
+                <label class="cursor-pointer bg-zinc-800 hover:bg-zinc-700 text-amber-400 text-[11px] font-bold px-2.5 py-1 rounded">
+                  📁 Upload Image
+                  <input id="cPosterFile" type="file" accept="image/*" onchange="previewPosterFile(this)" class="hidden" />
+                </label>
+              </div>
+              <img id="cPosterPreview" class="hidden w-20 h-28 object-cover rounded border border-zinc-700 mx-auto" />
+              <input id="cPoster" type="url" placeholder="Or paste Poster URL (Auto-fills for YouTube)" class="w-full bg-zinc-900 border border-zinc-800 rounded px-2.5 py-1.5 text-xs" />
+            </div>
+
+            <input id="cLink" type="text" placeholder="Paste any Video / Download Link" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+            <textarea id="cSynopsis" rows="2" placeholder="Short description..." class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs"></textarea>
+
+            <button id="publishBtn" onclick="cornerPublish()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-2 rounded-lg text-xs">
+              + Publish Now
+            </button>
+            <a href="admin.html" class="block text-center text-[11px] text-zinc-400 hover:text-amber-400 pt-1">
+              Open Full Admin Studio →
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="w-full sm:w-80 order-3 sm:order-2">
         <input
           id="searchInput"
           type="text"
@@ -59,63 +130,6 @@
     <div id="detailContent"></div>
   </section>
 
-  <!-- FLOATING CORNER ADMIN WIDGET -->
-  <div class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
-    <div id="adminCornerWindow" class="hidden mb-3 w-[92vw] max-w-sm bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl overflow-hidden">
-      <div class="bg-zinc-950 px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
-        <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400">🔐 Admin Corner</span>
-        <button onclick="toggleAdminCorner()" class="text-zinc-400 hover:text-white text-sm font-bold px-1.5">✕</button>
-      </div>
-
-      <!-- Corner Login Form -->
-      <div id="cornerLoginBox" class="p-4 space-y-3">
-        <p id="cornerAuthError" class="hidden text-xs text-red-400 bg-red-950/80 border border-red-800 p-2 rounded"></p>
-        <input id="cornerEmail" type="email" placeholder="Admin Email" class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 rounded-lg px-3 py-2 text-xs text-white outline-none" />
-        <input id="cornerPass" type="password" placeholder="Admin Password" class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 rounded-lg px-3 py-2 text-xs text-white outline-none" />
-        <button onclick="cornerLogin()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-2 rounded-lg text-xs">
-          Sign In
-        </button>
-      </div>
-
-      <!-- Corner Quick Upload Form -->
-      <div id="cornerUploadBox" class="hidden p-4 space-y-2.5 max-h-[75vh] overflow-y-auto">
-        <div class="flex items-center justify-between text-[11px] text-emerald-400 bg-emerald-950/60 border border-emerald-800/70 px-2.5 py-1.5 rounded">
-          <span>● Logged in as Admin</span>
-          <button onclick="cornerLogout()" class="text-zinc-300 underline">Logout</button>
-        </div>
-
-        <p id="cornerStatus" class="hidden text-xs text-emerald-300 bg-emerald-950 p-2 rounded"></p>
-
-        <input id="cTitle" type="text" placeholder="Title (Movie, Series, or Video)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
-        <div class="grid grid-cols-2 gap-2">
-          <input id="cYear" type="number" value="2026" placeholder="Year" class="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
-          <input id="cGenre" type="text" placeholder="Category (Movies, YouTube...)" class="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
-        </div>
-        <input id="cLanguage" type="text" value="Hindi" placeholder="Language (Hindi, Dual Audio...)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
-        <input id="cPoster" type="url" placeholder="Poster Image URL (Auto-fills for YouTube)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
-        <input id="cLink" type="url" placeholder="Any Video/Drive/TeraBox/YouTube/MP4 URL" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
-        <textarea id="cSynopsis" rows="2" placeholder="Short description..." class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs"></textarea>
-
-        <button onclick="cornerPublish()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-2 rounded-lg text-xs">
-          + Publish Now
-        </button>
-        <a href="admin.html" class="block text-center text-[11px] text-zinc-400 hover:text-amber-400 pt-1">
-          Open Full Admin Studio →
-        </a>
-      </div>
-    </div>
-
-    <!-- Corner Trigger Button -->
-    <button
-      id="adminCornerBtn"
-      onclick="toggleAdminCorner()"
-      class="bg-zinc-900 hover:bg-zinc-800 text-amber-400 border border-zinc-700 shadow-xl px-4 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 transition"
-    >
-      <span>🔐</span>
-      <span id="cornerBtnLabel">Admin Login</span>
-    </button>
-  </div>
-
   <footer class="bg-zinc-900 border-t border-zinc-800 py-4 px-4 text-center text-xs text-zinc-500">
     © 2026 Thefreewillhub
   </footer>
@@ -153,12 +167,61 @@
     let allMovies = [...FEATURED_VIDEOS];
     let currentCategory = 'All';
 
-    // Universal Platform Link Parser
-    function parseMediaLink(rawUrl) {
-      if (!rawUrl) return { type: 'none', platform: 'Link', embedUrl: null, originalUrl: '' };
-      const url = rawUrl.trim();
+    function extractCleanUrl(rawInput) {
+      if (!rawInput) return '';
+      const match = String(rawInput).match(/https?:\/\/[^\s"'<>]+/i);
+      return match ? match[0].trim() : String(rawInput).trim();
+    }
 
-      // 1. YouTube
+    function previewPosterFile(input) {
+      const file = input.files && input.files[0];
+      const img = document.getElementById('cPosterPreview');
+      if (!file) {
+        img.classList.add('hidden');
+        return;
+      }
+      img.src = URL.createObjectURL(file);
+      img.classList.remove('hidden');
+    }
+
+    // Compress image as fallback if storage bucket is not created yet
+    function compressImageToDataUrl(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const maxW = 420;
+            const scale = Math.min(1, maxW / img.width);
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function uploadPosterImage(file) {
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      const filePath = `poster-${Date.now()}.${ext}`;
+      const { error } = await db.storage.from('posters').upload(filePath, file, { upsert: true });
+      if (!error) {
+        const { data } = db.storage.from('posters').getPublicUrl(filePath);
+        if (data && data.publicUrl) return data.publicUrl;
+      }
+      // Fallback to compressed inline image if bucket doesn't exist yet
+      return await compressImageToDataUrl(file);
+    }
+
+    function parseMediaLink(rawUrl) {
+      const url = extractCleanUrl(rawUrl);
+      if (!url) return { type: 'none', platform: 'Link', embedUrl: null, originalUrl: '' };
+
       const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
       if (ytMatch) {
         return {
@@ -170,7 +233,6 @@
         };
       }
 
-      // 2. Google Drive
       const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
       if (driveMatch) {
         return {
@@ -181,7 +243,6 @@
         };
       }
 
-      // 3. Dailymotion
       const dmMatch = url.match(/(?:dailymotion\.com\/video\/|dai\.ly\/)([a-zA-Z0-9]+)/);
       if (dmMatch) {
         return {
@@ -192,7 +253,6 @@
         };
       }
 
-      // 4. Vimeo
       const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
       if (vimeoMatch) {
         return {
@@ -203,7 +263,6 @@
         };
       }
 
-      // 5. Direct Video Files (.mp4, .webm, .mkv, .m3u8)
       if (/\.(mp4|webm|ogg|mkv|m3u8)(\?.*)?$/i.test(url)) {
         return {
           type: 'video',
@@ -213,7 +272,6 @@
         };
       }
 
-      // 6. Custom Embed Links (/embed/ or /e/ from Streamtape, Dood, Mixdrop, etc.)
       if (/(\/embed\/|\/e\/|player\.)/i.test(url)) {
         return {
           type: 'iframe',
@@ -223,7 +281,6 @@
         };
       }
 
-      // 7. External Platforms that block iframes (TeraBox, Instagram, Facebook, Mega, etc.)
       let hostLabel = 'External Link';
       try {
         hostLabel = new URL(url).hostname.replace('www.', '');
@@ -237,7 +294,6 @@
       };
     }
 
-    // Corner Admin Window Controls
     function toggleAdminCorner() {
       document.getElementById('adminCornerWindow').classList.toggle('hidden');
     }
@@ -277,8 +333,9 @@
       const year = Number(document.getElementById('cYear').value) || 2026;
       const genre = document.getElementById('cGenre').value.trim() || 'Movies';
       const language = document.getElementById('cLanguage').value.trim() || 'Hindi';
-      let poster_url = document.getElementById('cPoster').value.trim();
-      const linkUrl = document.getElementById('cLink').value.trim();
+      const posterFile = document.getElementById('cPosterFile').files[0];
+      let poster_url = extractCleanUrl(document.getElementById('cPoster').value);
+      const linkUrl = extractCleanUrl(document.getElementById('cLink').value);
       const synopsis = document.getElementById('cSynopsis').value.trim();
 
       if (!title) {
@@ -286,45 +343,60 @@
         return;
       }
 
-      const parsed = parseMediaLink(linkUrl);
+      const btn = document.getElementById('publishBtn');
+      btn.disabled = true;
+      btn.textContent = 'Publishing...';
 
-      // Auto-fill thumbnail for YouTube or fallback placeholder if blank
-      if (!poster_url) {
-        if (parsed.platform === 'YouTube' && parsed.videoId) {
-          poster_url = `https://i.ytimg.com/vi/${parsed.videoId}/hqdefault.jpg`;
-        } else {
-          poster_url = DEFAULT_POSTER;
+      try {
+        const parsed = parseMediaLink(linkUrl);
+
+        if (posterFile) {
+          poster_url = await uploadPosterImage(posterFile);
+        } else if (!poster_url) {
+          if (parsed.platform === 'YouTube' && parsed.videoId) {
+            poster_url = `https://i.ytimg.com/vi/${parsed.videoId}/hqdefault.jpg`;
+          } else {
+            poster_url = DEFAULT_POSTER;
+          }
         }
+
+        const slug = `${title}-${year}-${Date.now().toString().slice(-4)}`.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+        const { data: movie, error } = await db
+          .from('movies')
+          .insert([{ title, slug, release_year: year, genre, language, poster_url, synopsis }])
+          .select().single();
+
+        if (error) {
+          alert('Error: ' + error.message);
+          return;
+        }
+
+        if (linkUrl) {
+          await db.from('download_links').insert([{
+            movie_id: movie.id,
+            quality: parsed.platform,
+            file_size: 'HD',
+            file_key: linkUrl,
+            stream_url: parsed.embedUrl || linkUrl
+          }]);
+        }
+
+        const st = document.getElementById('cornerStatus');
+        st.textContent = `Published "${title}"!`;
+        st.classList.remove('hidden');
+
+        document.getElementById('cTitle').value = '';
+        document.getElementById('cPoster').value = '';
+        document.getElementById('cPosterFile').value = '';
+        document.getElementById('cPosterPreview').classList.add('hidden');
+        document.getElementById('cLink').value = '';
+        document.getElementById('cSynopsis').value = '';
+        loadMovies();
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '+ Publish Now';
       }
-
-      const slug = `${title}-${year}-${Date.now().toString().slice(-4)}`.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-
-      const { data: movie, error } = await db
-        .from('movies')
-        .insert([{ title, slug, release_year: year, genre, language, poster_url, synopsis }])
-        .select().single();
-
-      if (error) return alert('Error: ' + error.message);
-
-      if (linkUrl) {
-        await db.from('download_links').insert([{
-          movie_id: movie.id,
-          quality: parsed.platform,
-          file_size: 'HD',
-          file_key: linkUrl,
-          stream_url: parsed.embedUrl || linkUrl
-        }]);
-      }
-
-      const st = document.getElementById('cornerStatus');
-      st.textContent = `Published "${title}" (${parsed.platform})!`;
-      st.classList.remove('hidden');
-
-      document.getElementById('cTitle').value = '';
-      document.getElementById('cPoster').value = '';
-      document.getElementById('cLink').value = '';
-      document.getElementById('cSynopsis').value = '';
-      loadMovies();
     }
 
     async function loadMovies() {
@@ -436,7 +508,7 @@
         playerHtml = `
           <div class="mt-8 bg-zinc-900 border border-zinc-800 rounded-xl p-6 text-center space-y-3">
             <h3 class="text-lg font-bold text-amber-400">Hosted on ${parsed.platform}</h3>
-            <p class="text-xs text-zinc-400">This platform opens directly in its native player or app.</p>
+            <p class="text-xs text-zinc-400">Tap below to open the stream or download directly.</p>
             <a href="${parsed.originalUrl}" target="_blank" rel="noopener noreferrer" class="inline-block bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-lg text-sm">
               ▶ Watch / Download on ${parsed.platform}
             </a>
@@ -452,19 +524,22 @@
            </div>`
         : '';
 
-      const linksHtml = (movie.download_links || []).map(link => `
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-zinc-950 p-4 rounded-lg border border-zinc-800">
-          <div>
-            <span class="font-bold text-amber-400 text-lg">${link.quality || 'HD'}</span>
-            <span class="text-zinc-400 text-sm ml-2">[${link.file_size || 'Link'}]</span>
+      const linksHtml = (movie.download_links || []).map(link => {
+        const cleanHref = extractCleanUrl(link.file_key);
+        return `
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-zinc-950 p-4 rounded-lg border border-zinc-800">
+            <div>
+              <span class="font-bold text-amber-400 text-lg">${link.quality || 'HD'}</span>
+              <span class="text-zinc-400 text-sm ml-2">[${link.file_size || 'Link'}]</span>
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto">
+              <a href="${cleanHref}" target="_blank" rel="noopener noreferrer" class="flex-1 sm:flex-initial text-center bg-amber-500 hover:bg-amber-400 text-black text-sm font-bold px-5 py-2 rounded-md">
+                ▶ Open / Download
+              </a>
+            </div>
           </div>
-          <div class="flex gap-2 w-full sm:w-auto">
-            <a href="${link.file_key}" target="_blank" rel="noopener noreferrer" class="flex-1 sm:flex-initial text-center bg-amber-500 hover:bg-amber-400 text-black text-sm font-bold px-5 py-2 rounded-md">
-              ▶ Open / Download
-            </a>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
 
       document.getElementById('detailContent').innerHTML = `
         <div class="flex flex-col md:flex-row gap-6 bg-zinc-900/70 border border-zinc-800 p-6 rounded-xl">
