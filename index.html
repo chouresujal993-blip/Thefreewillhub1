@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MediaHub - Movies & Series</title>
+  <title>Thefreewillhub - Videos, Movies & Series</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col">
 
   <!-- Header & Search -->
-  <header class="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-40">
+  <header class="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
       <a href="#" onclick="showHome(); return false;" class="text-2xl font-extrabold tracking-tight">
-        MEDIA<span class="text-amber-500">HUB</span>
+        THEFREEWILL<span class="text-amber-500">HUB</span>
       </a>
 
-      <div class="w-full sm:w-80 flex gap-2">
+      <div class="w-full sm:w-80 flex items-center gap-2">
         <input
           id="searchInput"
           type="text"
           oninput="filterCatalog()"
-          placeholder="Search movies, year, language..."
+          placeholder="Search videos, movies, year, language..."
           class="w-full bg-zinc-950 border border-zinc-700 focus:border-amber-500 rounded-lg px-3.5 py-2 text-sm text-white outline-none"
         />
       </div>
@@ -31,12 +31,12 @@
     <div class="bg-zinc-950/90 border-t border-zinc-800/80 overflow-x-auto">
       <div id="categoryBar" class="max-w-7xl mx-auto px-4 py-2.5 flex gap-2">
         <button onclick="setCategory('All')" class="cat-btn bg-amber-500 text-black px-3.5 py-1 rounded text-xs font-bold whitespace-nowrap">All</button>
+        <button onclick="setCategory('YouTube')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">YouTube</button>
+        <button onclick="setCategory('Vlog')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">Vlog</button>
+        <button onclick="setCategory('Challenge')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">Challenge</button>
         <button onclick="setCategory('Action')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">Action</button>
-        <button onclick="setCategory('Sci-Fi')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">Sci-Fi</button>
-        <button onclick="setCategory('Drama')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">Drama</button>
-        <button onclick="setCategory('Thriller')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">Thriller</button>
+        <button onclick="setCategory('Hindi')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">Hindi</button>
         <button onclick="setCategory('Dual Audio')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">Dual Audio</button>
-        <button onclick="setCategory('4K')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">4K</button>
       </div>
     </div>
   </header>
@@ -51,36 +51,210 @@
     <div id="movieGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
   </main>
 
-  <!-- Movie Detail & Download View -->
+  <!-- Video / Movie Detail & Player View -->
   <section id="detailView" class="hidden flex-1 max-w-5xl w-full mx-auto px-4 py-6">
     <button onclick="showHome()" class="mb-5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs font-semibold px-4 py-2 rounded-lg">
-      ← Back to All Movies
+      ← Back to All Releases
     </button>
     <div id="detailContent"></div>
   </section>
 
+  <!-- FLOATING CORNER ADMIN WIDGET -->
+  <div class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
+    <!-- Expandable Corner Window -->
+    <div id="adminCornerWindow" class="hidden mb-3 w-[92vw] max-w-sm bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl overflow-hidden">
+      <div class="bg-zinc-950 px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400">🔐 Admin Corner</span>
+        <button onclick="toggleAdminCorner()" class="text-zinc-400 hover:text-white text-sm font-bold px-1.5">✕</button>
+      </div>
+
+      <!-- Corner Login Form -->
+      <div id="cornerLoginBox" class="p-4 space-y-3">
+        <p id="cornerAuthError" class="hidden text-xs text-red-400 bg-red-950/80 border border-red-800 p-2 rounded"></p>
+        <input id="cornerEmail" type="email" placeholder="Admin Email" class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 rounded-lg px-3 py-2 text-xs text-white outline-none" />
+        <input id="cornerPass" type="password" placeholder="Admin Password" class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 rounded-lg px-3 py-2 text-xs text-white outline-none" />
+        <button onclick="cornerLogin()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-2 rounded-lg text-xs">
+          Sign In
+        </button>
+      </div>
+
+      <!-- Corner Quick Upload Form (Shown after login) -->
+      <div id="cornerUploadBox" class="hidden p-4 space-y-2.5 max-h-[75vh] overflow-y-auto">
+        <div class="flex items-center justify-between text-[11px] text-emerald-400 bg-emerald-950/60 border border-emerald-800/70 px-2.5 py-1.5 rounded">
+          <span>● Logged in as Admin</span>
+          <button onclick="cornerLogout()" class="text-zinc-300 underline">Logout</button>
+        </div>
+
+        <p id="cornerStatus" class="hidden text-xs text-emerald-300 bg-emerald-950 p-2 rounded"></p>
+
+        <input id="cTitle" type="text" placeholder="Title (Movie or YouTube Video)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+        <div class="grid grid-cols-2 gap-2">
+          <input id="cYear" type="number" value="2026" placeholder="Year" class="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+          <input id="cGenre" type="text" placeholder="Category (YouTube, Action)" class="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+        </div>
+        <input id="cPoster" type="url" placeholder="Poster / Thumbnail URL (https://...)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+        <input id="cLink" type="url" placeholder="YouTube or Download URL (https://...)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+        <textarea id="cSynopsis" rows="2" placeholder="Short description..." class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs"></textarea>
+
+        <button onclick="cornerPublish()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-2 rounded-lg text-xs">
+          + Publish Now
+        </button>
+        <a href="admin.html" class="block text-center text-[11px] text-zinc-400 hover:text-amber-400 pt-1">
+          Open Full Admin Studio →
+        </a>
+      </div>
+    </div>
+
+    <!-- Corner Trigger Pill Button -->
+    <button
+      id="adminCornerBtn"
+      onclick="toggleAdminCorner()"
+      class="bg-zinc-900 hover:bg-zinc-800 text-amber-400 border border-zinc-700 shadow-xl px-4 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 transition"
+    >
+      <span>🔐</span>
+      <span id="cornerBtnLabel">Admin Login</span>
+    </button>
+  </div>
+
+  <footer class="bg-zinc-900 border-t border-zinc-800 py-4 px-4 text-center text-xs text-zinc-500">
+    © 2026 Thefreewillhub
+  </footer>
+
   <script>
-    // PASTE ONLY YOUR SUPABASE PROJECT URL BELOW:
-    const SUPABASE_URL = 'PASTE_YOUR_SUPABASE_URL_HERE';
+    const SUPABASE_URL = 'https://hqchlnsccvwbtzyrckfo.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_FnbkRZ3n8a1EaQQTeRcpmw_5HsevpHX';
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let allMovies = [];
+    const FEATURED_VIDEOS = [
+      {
+        id: 'yt-sed2d1M5ipg',
+        title: 'Rich vs Normal Challenge (I bought an entire STORE) 😱',
+        release_year: 2026,
+        genre: 'YouTube, Vlog, Challenge',
+        language: 'Hindi',
+        poster_url: 'https://i.ytimg.com/vi/sed2d1M5ipg/hqdefault.jpg',
+        synopsis: 'Wanderers Hub Diwali special challenge: buying out an entire diya store from young Gullu, gifting rations, clothes, smartphones, and a television to make Diwali brighter for people in need.',
+        screenshots: [
+          'https://i.ytimg.com/vi/sed2d1M5ipg/maxresdefault.jpg'
+        ],
+        download_links: [
+          {
+            quality: 'YouTube HD',
+            file_size: '19m 36s',
+            file_key: 'https://youtu.be/sed2d1M5ipg?si=rhqbioW4Z2PCaFmp',
+            stream_url: 'https://www.youtube.com/embed/sed2d1M5ipg'
+          }
+        ]
+      }
+    ];
+
+    let allMovies = [...FEATURED_VIDEOS];
     let currentCategory = 'All';
 
-    async function loadMovies() {
-      const { data, error } = await db
-        .from('movies')
-        .select('*, download_links(*)')
-        .order('created_at', { ascending: false });
+    // Corner Admin Window Controls
+    function toggleAdminCorner() {
+      const win = document.getElementById('adminCornerWindow');
+      win.classList.toggle('hidden');
+    }
 
+    db.auth.getSession().then(({ data: { session } }) => {
+      if (session) setCornerLoggedIn(true);
+    });
+
+    function setCornerLoggedIn(isLoggedIn) {
+      document.getElementById('cornerLoginBox').classList.toggle('hidden', isLoggedIn);
+      document.getElementById('cornerUploadBox').classList.toggle('hidden', !isLoggedIn);
+      document.getElementById('cornerBtnLabel').textContent = isLoggedIn ? 'Admin Studio' : 'Admin Login';
+    }
+
+    async function cornerLogin() {
+      const email = document.getElementById('cornerEmail').value.trim();
+      const password = document.getElementById('cornerPass').value;
+      const errEl = document.getElementById('cornerAuthError');
+      errEl.classList.add('hidden');
+
+      const { error } = await db.auth.signInWithPassword({ email, password });
       if (error) {
-        document.getElementById('countLabel').textContent = 'Error loading database';
-        console.error(error);
+        errEl.textContent = error.message;
+        errEl.classList.remove('hidden');
+      } else {
+        setCornerLoggedIn(true);
+      }
+    }
+
+    async function cornerLogout() {
+      await db.auth.signOut();
+      setCornerLoggedIn(false);
+    }
+
+    async function cornerPublish() {
+      const title = document.getElementById('cTitle').value.trim();
+      const year = Number(document.getElementById('cYear').value) || 2026;
+      const genre = document.getElementById('cGenre').value.trim() || 'YouTube';
+      let poster_url = document.getElementById('cPoster').value.trim();
+      const linkUrl = document.getElementById('cLink').value.trim();
+      const synopsis = document.getElementById('cSynopsis').value.trim();
+
+      const ytEmbed = getYouTubeEmbedUrl(linkUrl);
+      if (!poster_url && ytEmbed) {
+        const ytId = ytEmbed.split('/').pop();
+        poster_url = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`;
+      }
+
+      if (!title || !poster_url) {
+        alert('Please enter a Title and a Poster URL (or a YouTube link).');
         return;
       }
 
-      allMovies = data || [];
+      const slug = `${title}-${year}-${Date.now().toString().slice(-4)}`.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+      const { data: movie, error } = await db
+        .from('movies')
+        .insert([{ title, slug, release_year: year, genre, language: 'Hindi', poster_url, synopsis }])
+        .select().single();
+
+      if (error) return alert('Error: ' + error.message);
+
+      if (linkUrl) {
+        await db.from('download_links').insert([{
+          movie_id: movie.id,
+          quality: ytEmbed ? 'YouTube HD' : '1080p',
+          file_size: ytEmbed ? 'Stream' : 'HD',
+          file_key: linkUrl,
+          stream_url: ytEmbed || linkUrl
+        }]);
+      }
+
+      const st = document.getElementById('cornerStatus');
+      st.textContent = `Published "${title}"!`;
+      st.classList.remove('hidden');
+
+      document.getElementById('cTitle').value = '';
+      document.getElementById('cPoster').value = '';
+      document.getElementById('cLink').value = '';
+      document.getElementById('cSynopsis').value = '';
+      loadMovies();
+    }
+
+    function getYouTubeEmbedUrl(url) {
+      if (!url) return null;
+      const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      return match ? `https://www.youtube.com/embed/${match[1]}` : null;
+    }
+
+    async function loadMovies() {
+      try {
+        const { data, error } = await db
+          .from('movies')
+          .select('*, download_links(*)')
+          .order('created_at', { ascending: false });
+
+        if (!error && Array.isArray(data)) {
+          allMovies = [...data, ...FEATURED_VIDEOS];
+        }
+      } catch (err) {
+        console.error(err);
+      }
       filterCatalog();
     }
 
@@ -113,7 +287,8 @@
         const matchesSearch =
           m.title.toLowerCase().includes(query) ||
           String(m.release_year).includes(query) ||
-          (m.language || '').toLowerCase().includes(query);
+          (m.language || '').toLowerCase().includes(query) ||
+          (m.genre || '').toLowerCase().includes(query);
 
         const matchesCat =
           currentCategory === 'All' ||
@@ -127,5 +302,107 @@
       const grid = document.getElementById('movieGrid');
 
       if (filtered.length === 0) {
-        grid.innerHTML = `<p class="col-span-full text-center text-zinc-400 py-16">No movies found.</p>`;
+        grid.innerHTML = `<p class="col-span-full text-center text-zinc-400 py-16">No videos or movies found.</p>`;
         return;
+      }
+
+      grid.innerHTML = filtered.map(movie => `
+        <div onclick="openMovie('${movie.id}')" class="cursor-pointer group bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-amber-500 transition flex flex-col">
+          <div class="relative aspect-[2/3] bg-zinc-800 overflow-hidden">
+            <img src="${movie.poster_url}" alt="${movie.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+            <span class="absolute top-2 right-2 bg-amber-500 text-black text-[11px] font-extrabold px-2 py-0.5 rounded shadow">
+              ${getTopQuality(movie.download_links)}
+            </span>
+          </div>
+          <div class="p-3 flex-1 flex flex-col justify-between">
+            <h2 class="text-sm font-semibold text-zinc-100 line-clamp-2 group-hover:text-amber-400">
+              ${movie.title} (${movie.release_year}) ${movie.language || ''}
+            </h2>
+            <p class="text-[11px] text-zinc-400 mt-2 truncate">${movie.genre || ''}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openMovie(id) {
+      const movie = allMovies.find(m => String(m.id) === String(id));
+      if (!movie) return;
+
+      document.getElementById('catalogView').classList.add('hidden');
+      document.getElementById('detailView').classList.remove('hidden');
+      window.scrollTo(0, 0);
+
+      const streamLink = (movie.download_links || []).find(l => l.stream_url || getYouTubeEmbedUrl(l.file_key));
+      const rawStream = streamLink ? (streamLink.stream_url || streamLink.file_key) : null;
+      const ytEmbed = getYouTubeEmbedUrl(rawStream);
+
+      let playerHtml = '';
+      if (ytEmbed) {
+        playerHtml = `
+          <div class="mt-8 bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+            <h3 class="text-lg font-bold text-amber-400 text-center mb-3">Watch Video Online</h3>
+            <div class="relative w-full pt-[56.25%] rounded-lg overflow-hidden bg-black">
+              <iframe src="${ytEmbed}" title="${movie.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="absolute inset-0 w-full h-full"></iframe>
+            </div>
+          </div>`;
+      } else if (rawStream) {
+        playerHtml = `
+          <div class="mt-8 bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+            <h3 class="text-lg font-bold text-amber-400 text-center mb-3">Watch Online</h3>
+            <video controls preload="metadata" poster="${movie.poster_url}" src="${rawStream}" class="w-full max-h-[500px] rounded-lg bg-black"></video>
+          </div>`;
+      }
+
+      const screenshotsHtml = (movie.screenshots && movie.screenshots.length)
+        ? `<div class="mt-8">
+             <h3 class="text-lg font-bold text-amber-400 text-center mb-4">Preview & Screenshots</h3>
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+               ${movie.screenshots.map(url => `<img src="${url}" class="w-full rounded-lg border border-zinc-800" />`).join('')}
+             </div>
+           </div>`
+        : '';
+
+      const linksHtml = (movie.download_links || []).map(link => `
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-zinc-950 p-4 rounded-lg border border-zinc-800">
+          <div>
+            <span class="font-bold text-amber-400 text-lg">${link.quality}</span>
+            <span class="text-zinc-400 text-sm ml-2">[${link.file_size}]</span>
+          </div>
+          <div class="flex gap-2 w-full sm:w-auto">
+            ${link.stream_url ? `<a href="${link.file_key}" target="_blank" class="flex-1 sm:flex-initial text-center bg-zinc-800 hover:bg-zinc-700 text-white text-sm font-semibold px-4 py-2 rounded-md">▶ Watch on YouTube</a>` : ''}
+            <a href="${link.file_key}" target="_blank" class="flex-1 sm:flex-initial text-center bg-amber-500 hover:bg-amber-400 text-black text-sm font-bold px-4 py-2 rounded-md">⬇ Open Link</a>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('detailContent').innerHTML = `
+        <div class="flex flex-col md:flex-row gap-6 bg-zinc-900/70 border border-zinc-800 p-6 rounded-xl">
+          <img src="${movie.poster_url}" class="w-56 h-80 object-cover rounded-lg mx-auto md:mx-0 border border-zinc-700" />
+          <div class="flex-1 space-y-3">
+            <h1 class="text-2xl sm:text-3xl font-bold text-white">${movie.title} (${movie.release_year})</h1>
+            <div class="flex flex-wrap gap-2 text-xs text-zinc-300">
+              <span class="bg-zinc-800 px-3 py-1 rounded-full">📅 ${movie.release_year}</span>
+              <span class="bg-zinc-800 px-3 py-1 rounded-full">🎬 ${movie.genre || ''}</span>
+              <span class="bg-zinc-800 px-3 py-1 rounded-full">🌐 ${movie.language || ''}</span>
+            </div>
+            <p class="text-zinc-300 text-sm leading-relaxed pt-2">${movie.synopsis || ''}</p>
+          </div>
+        </div>
+        ${playerHtml}
+        ${screenshotsHtml}
+        <div class="mt-8 bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+          <h3 class="text-lg font-bold text-center mb-5">Watch & Download Links</h3>
+          <div class="space-y-3 max-w-xl mx-auto">${linksHtml}</div>
+        </div>
+      `;
+    }
+
+    function showHome() {
+      document.getElementById('detailView').classList.add('hidden');
+      document.getElementById('catalogView').classList.remove('hidden');
+    }
+
+    loadMovies();
+  </script>
+</body>
+</html>
