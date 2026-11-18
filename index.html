@@ -32,8 +32,8 @@
       <div id="categoryBar" class="max-w-7xl mx-auto px-4 py-2.5 flex gap-2">
         <button onclick="setCategory('All')" class="cat-btn bg-amber-500 text-black px-3.5 py-1 rounded text-xs font-bold whitespace-nowrap">All</button>
         <button onclick="setCategory('YouTube')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">YouTube</button>
+        <button onclick="setCategory('Movies')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">Movies</button>
         <button onclick="setCategory('Vlog')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">Vlog</button>
-        <button onclick="setCategory('Challenge')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">Challenge</button>
         <button onclick="setCategory('Action')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">Action</button>
         <button onclick="setCategory('Hindi')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">Hindi</button>
         <button onclick="setCategory('Dual Audio')" class="cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap">Dual Audio</button>
@@ -61,7 +61,6 @@
 
   <!-- FLOATING CORNER ADMIN WIDGET -->
   <div class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
-    <!-- Expandable Corner Window -->
     <div id="adminCornerWindow" class="hidden mb-3 w-[92vw] max-w-sm bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl overflow-hidden">
       <div class="bg-zinc-950 px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
         <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400">🔐 Admin Corner</span>
@@ -78,7 +77,7 @@
         </button>
       </div>
 
-      <!-- Corner Quick Upload Form (Shown after login) -->
+      <!-- Corner Quick Upload Form -->
       <div id="cornerUploadBox" class="hidden p-4 space-y-2.5 max-h-[75vh] overflow-y-auto">
         <div class="flex items-center justify-between text-[11px] text-emerald-400 bg-emerald-950/60 border border-emerald-800/70 px-2.5 py-1.5 rounded">
           <span>● Logged in as Admin</span>
@@ -87,13 +86,14 @@
 
         <p id="cornerStatus" class="hidden text-xs text-emerald-300 bg-emerald-950 p-2 rounded"></p>
 
-        <input id="cTitle" type="text" placeholder="Title (Movie or YouTube Video)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+        <input id="cTitle" type="text" placeholder="Title (Movie, Series, or Video)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
         <div class="grid grid-cols-2 gap-2">
           <input id="cYear" type="number" value="2026" placeholder="Year" class="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
-          <input id="cGenre" type="text" placeholder="Category (YouTube, Action)" class="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+          <input id="cGenre" type="text" placeholder="Category (Movies, YouTube...)" class="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
         </div>
-        <input id="cPoster" type="url" placeholder="Poster / Thumbnail URL (https://...)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
-        <input id="cLink" type="url" placeholder="YouTube or Download URL (https://...)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+        <input id="cLanguage" type="text" value="Hindi" placeholder="Language (Hindi, Dual Audio...)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+        <input id="cPoster" type="url" placeholder="Poster Image URL (Auto-fills for YouTube)" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
+        <input id="cLink" type="url" placeholder="Any Video/Drive/TeraBox/YouTube/MP4 URL" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs" />
         <textarea id="cSynopsis" rows="2" placeholder="Short description..." class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs"></textarea>
 
         <button onclick="cornerPublish()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-2 rounded-lg text-xs">
@@ -105,7 +105,7 @@
       </div>
     </div>
 
-    <!-- Corner Trigger Pill Button -->
+    <!-- Corner Trigger Button -->
     <button
       id="adminCornerBtn"
       onclick="toggleAdminCorner()"
@@ -124,6 +124,8 @@
     const SUPABASE_URL = 'https://hqchlnsccvwbtzyrckfo.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_FnbkRZ3n8a1EaQQTeRcpmw_5HsevpHX';
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const DEFAULT_POSTER = 'https://placehold.co/500x750/18181b/f59e0b?text=Thefreewillhub';
 
     const FEATURED_VIDEOS = [
       {
@@ -151,10 +153,93 @@
     let allMovies = [...FEATURED_VIDEOS];
     let currentCategory = 'All';
 
+    // Universal Platform Link Parser
+    function parseMediaLink(rawUrl) {
+      if (!rawUrl) return { type: 'none', platform: 'Link', embedUrl: null, originalUrl: '' };
+      const url = rawUrl.trim();
+
+      // 1. YouTube
+      const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      if (ytMatch) {
+        return {
+          type: 'iframe',
+          platform: 'YouTube',
+          videoId: ytMatch[1],
+          embedUrl: `https://www.youtube.com/embed/${ytMatch[1]}`,
+          originalUrl: url
+        };
+      }
+
+      // 2. Google Drive
+      const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (driveMatch) {
+        return {
+          type: 'iframe',
+          platform: 'Google Drive',
+          embedUrl: `https://drive.google.com/file/d/${driveMatch[1]}/preview`,
+          originalUrl: url
+        };
+      }
+
+      // 3. Dailymotion
+      const dmMatch = url.match(/(?:dailymotion\.com\/video\/|dai\.ly\/)([a-zA-Z0-9]+)/);
+      if (dmMatch) {
+        return {
+          type: 'iframe',
+          platform: 'Dailymotion',
+          embedUrl: `https://www.dailymotion.com/embed/video/${dmMatch[1]}`,
+          originalUrl: url
+        };
+      }
+
+      // 4. Vimeo
+      const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+      if (vimeoMatch) {
+        return {
+          type: 'iframe',
+          platform: 'Vimeo',
+          embedUrl: `https://player.vimeo.com/video/${vimeoMatch[1]}`,
+          originalUrl: url
+        };
+      }
+
+      // 5. Direct Video Files (.mp4, .webm, .mkv, .m3u8)
+      if (/\.(mp4|webm|ogg|mkv|m3u8)(\?.*)?$/i.test(url)) {
+        return {
+          type: 'video',
+          platform: 'Direct Video',
+          embedUrl: url,
+          originalUrl: url
+        };
+      }
+
+      // 6. Custom Embed Links (/embed/ or /e/ from Streamtape, Dood, Mixdrop, etc.)
+      if (/(\/embed\/|\/e\/|player\.)/i.test(url)) {
+        return {
+          type: 'iframe',
+          platform: 'Stream Player',
+          embedUrl: url,
+          originalUrl: url
+        };
+      }
+
+      // 7. External Platforms that block iframes (TeraBox, Instagram, Facebook, Mega, etc.)
+      let hostLabel = 'External Link';
+      try {
+        hostLabel = new URL(url).hostname.replace('www.', '');
+      } catch (e) {}
+
+      return {
+        type: 'external',
+        platform: hostLabel,
+        embedUrl: null,
+        originalUrl: url
+      };
+    }
+
     // Corner Admin Window Controls
     function toggleAdminCorner() {
-      const win = document.getElementById('adminCornerWindow');
-      win.classList.toggle('hidden');
+      document.getElementById('adminCornerWindow').classList.toggle('hidden');
     }
 
     db.auth.getSession().then(({ data: { session } }) => {
@@ -190,27 +275,33 @@
     async function cornerPublish() {
       const title = document.getElementById('cTitle').value.trim();
       const year = Number(document.getElementById('cYear').value) || 2026;
-      const genre = document.getElementById('cGenre').value.trim() || 'YouTube';
+      const genre = document.getElementById('cGenre').value.trim() || 'Movies';
+      const language = document.getElementById('cLanguage').value.trim() || 'Hindi';
       let poster_url = document.getElementById('cPoster').value.trim();
       const linkUrl = document.getElementById('cLink').value.trim();
       const synopsis = document.getElementById('cSynopsis').value.trim();
 
-      const ytEmbed = getYouTubeEmbedUrl(linkUrl);
-      if (!poster_url && ytEmbed) {
-        const ytId = ytEmbed.split('/').pop();
-        poster_url = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`;
+      if (!title) {
+        alert('Please enter a Title.');
+        return;
       }
 
-      if (!title || !poster_url) {
-        alert('Please enter a Title and a Poster URL (or a YouTube link).');
-        return;
+      const parsed = parseMediaLink(linkUrl);
+
+      // Auto-fill thumbnail for YouTube or fallback placeholder if blank
+      if (!poster_url) {
+        if (parsed.platform === 'YouTube' && parsed.videoId) {
+          poster_url = `https://i.ytimg.com/vi/${parsed.videoId}/hqdefault.jpg`;
+        } else {
+          poster_url = DEFAULT_POSTER;
+        }
       }
 
       const slug = `${title}-${year}-${Date.now().toString().slice(-4)}`.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
       const { data: movie, error } = await db
         .from('movies')
-        .insert([{ title, slug, release_year: year, genre, language: 'Hindi', poster_url, synopsis }])
+        .insert([{ title, slug, release_year: year, genre, language, poster_url, synopsis }])
         .select().single();
 
       if (error) return alert('Error: ' + error.message);
@@ -218,15 +309,15 @@
       if (linkUrl) {
         await db.from('download_links').insert([{
           movie_id: movie.id,
-          quality: ytEmbed ? 'YouTube HD' : '1080p',
-          file_size: ytEmbed ? 'Stream' : 'HD',
+          quality: parsed.platform,
+          file_size: 'HD',
           file_key: linkUrl,
-          stream_url: ytEmbed || linkUrl
+          stream_url: parsed.embedUrl || linkUrl
         }]);
       }
 
       const st = document.getElementById('cornerStatus');
-      st.textContent = `Published "${title}"!`;
+      st.textContent = `Published "${title}" (${parsed.platform})!`;
       st.classList.remove('hidden');
 
       document.getElementById('cTitle').value = '';
@@ -234,12 +325,6 @@
       document.getElementById('cLink').value = '';
       document.getElementById('cSynopsis').value = '';
       loadMovies();
-    }
-
-    function getYouTubeEmbedUrl(url) {
-      if (!url) return null;
-      const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-      return match ? `https://www.youtube.com/embed/${match[1]}` : null;
     }
 
     async function loadMovies() {
@@ -260,11 +345,7 @@
 
     function getTopQuality(links) {
       if (!links || links.length === 0) return 'HD';
-      const q = links.map(l => l.quality);
-      if (q.includes('4K') || q.includes('2160p')) return '4K';
-      if (q.includes('1080p')) return '1080p';
-      if (q.includes('720p')) return '720p';
-      return q[0];
+      return links[0].quality || 'HD';
     }
 
     function setCategory(cat) {
@@ -309,7 +390,7 @@
       grid.innerHTML = filtered.map(movie => `
         <div onclick="openMovie('${movie.id}')" class="cursor-pointer group bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-amber-500 transition flex flex-col">
           <div class="relative aspect-[2/3] bg-zinc-800 overflow-hidden">
-            <img src="${movie.poster_url}" alt="${movie.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+            <img src="${movie.poster_url || DEFAULT_POSTER}" alt="${movie.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
             <span class="absolute top-2 right-2 bg-amber-500 text-black text-[11px] font-extrabold px-2 py-0.5 rounded shadow">
               ${getTopQuality(movie.download_links)}
             </span>
@@ -332,24 +413,33 @@
       document.getElementById('detailView').classList.remove('hidden');
       window.scrollTo(0, 0);
 
-      const streamLink = (movie.download_links || []).find(l => l.stream_url || getYouTubeEmbedUrl(l.file_key));
-      const rawStream = streamLink ? (streamLink.stream_url || streamLink.file_key) : null;
-      const ytEmbed = getYouTubeEmbedUrl(rawStream);
+      const firstLink = (movie.download_links || [])[0];
+      const rawUrl = firstLink ? (firstLink.file_key || firstLink.stream_url) : null;
+      const parsed = parseMediaLink(rawUrl);
 
       let playerHtml = '';
-      if (ytEmbed) {
+      if (parsed.type === 'iframe' && parsed.embedUrl) {
         playerHtml = `
           <div class="mt-8 bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-            <h3 class="text-lg font-bold text-amber-400 text-center mb-3">Watch Video Online</h3>
+            <h3 class="text-lg font-bold text-amber-400 text-center mb-3">Watch Online (${parsed.platform})</h3>
             <div class="relative w-full pt-[56.25%] rounded-lg overflow-hidden bg-black">
-              <iframe src="${ytEmbed}" title="${movie.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="absolute inset-0 w-full h-full"></iframe>
+              <iframe src="${parsed.embedUrl}" title="${movie.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen class="absolute inset-0 w-full h-full"></iframe>
             </div>
           </div>`;
-      } else if (rawStream) {
+      } else if (parsed.type === 'video' && parsed.embedUrl) {
         playerHtml = `
           <div class="mt-8 bg-zinc-900 border border-zinc-800 rounded-xl p-4">
             <h3 class="text-lg font-bold text-amber-400 text-center mb-3">Watch Online</h3>
-            <video controls preload="metadata" poster="${movie.poster_url}" src="${rawStream}" class="w-full max-h-[500px] rounded-lg bg-black"></video>
+            <video controls preload="metadata" poster="${movie.poster_url || DEFAULT_POSTER}" src="${parsed.embedUrl}" class="w-full max-h-[500px] rounded-lg bg-black"></video>
+          </div>`;
+      } else if (parsed.type === 'external' && parsed.originalUrl) {
+        playerHtml = `
+          <div class="mt-8 bg-zinc-900 border border-zinc-800 rounded-xl p-6 text-center space-y-3">
+            <h3 class="text-lg font-bold text-amber-400">Hosted on ${parsed.platform}</h3>
+            <p class="text-xs text-zinc-400">This platform opens directly in its native player or app.</p>
+            <a href="${parsed.originalUrl}" target="_blank" rel="noopener noreferrer" class="inline-block bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-lg text-sm">
+              ▶ Watch / Download on ${parsed.platform}
+            </a>
           </div>`;
       }
 
@@ -365,19 +455,20 @@
       const linksHtml = (movie.download_links || []).map(link => `
         <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-zinc-950 p-4 rounded-lg border border-zinc-800">
           <div>
-            <span class="font-bold text-amber-400 text-lg">${link.quality}</span>
-            <span class="text-zinc-400 text-sm ml-2">[${link.file_size}]</span>
+            <span class="font-bold text-amber-400 text-lg">${link.quality || 'HD'}</span>
+            <span class="text-zinc-400 text-sm ml-2">[${link.file_size || 'Link'}]</span>
           </div>
           <div class="flex gap-2 w-full sm:w-auto">
-            ${link.stream_url ? `<a href="${link.file_key}" target="_blank" class="flex-1 sm:flex-initial text-center bg-zinc-800 hover:bg-zinc-700 text-white text-sm font-semibold px-4 py-2 rounded-md">▶ Watch on YouTube</a>` : ''}
-            <a href="${link.file_key}" target="_blank" class="flex-1 sm:flex-initial text-center bg-amber-500 hover:bg-amber-400 text-black text-sm font-bold px-4 py-2 rounded-md">⬇ Open Link</a>
+            <a href="${link.file_key}" target="_blank" rel="noopener noreferrer" class="flex-1 sm:flex-initial text-center bg-amber-500 hover:bg-amber-400 text-black text-sm font-bold px-5 py-2 rounded-md">
+              ▶ Open / Download
+            </a>
           </div>
         </div>
       `).join('');
 
       document.getElementById('detailContent').innerHTML = `
         <div class="flex flex-col md:flex-row gap-6 bg-zinc-900/70 border border-zinc-800 p-6 rounded-xl">
-          <img src="${movie.poster_url}" class="w-56 h-80 object-cover rounded-lg mx-auto md:mx-0 border border-zinc-700" />
+          <img src="${movie.poster_url || DEFAULT_POSTER}" class="w-56 h-80 object-cover rounded-lg mx-auto md:mx-0 border border-zinc-700" />
           <div class="flex-1 space-y-3">
             <h1 class="text-2xl sm:text-3xl font-bold text-white">${movie.title} (${movie.release_year})</h1>
             <div class="flex flex-wrap gap-2 text-xs text-zinc-300">
