@@ -19,8 +19,11 @@
   <header class="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-2.5">
-        <a href="#" onclick="showHome(); return false;" class="text-xl sm:text-2xl font-extrabold tracking-tight">
-          THEFREEWILL<span class="text-red-500">HUB</span>
+        <a href="#" onclick="showHome(); return false;" class="flex items-center gap-2">
+          <img id="siteHeaderLogo" src="" alt="" class="hidden w-8 h-8 rounded-lg object-cover border border-zinc-700" />
+          <span class="text-xl sm:text-2xl font-extrabold tracking-tight">
+            THEFREEWILL<span class="text-red-500">HUB</span>
+          </span>
         </a>
 
         <!-- Official YouTube & Instagram Account Icons -->
@@ -34,7 +37,7 @@
         </div>
       </div>
 
-      <!-- CONTROLS -->
+      <!-- TOP-RIGHT CONTROLS -->
       <div class="flex items-center gap-2 order-2 sm:order-3">
         <button
           id="installAppBtn"
@@ -83,12 +86,12 @@
     </div>
   </header>
 
-  <!-- ADVANCED ADMIN STUDIO MODAL -->
-  <div id="adminBackdrop" onclick="toggleAdminStudio()" class="hidden fixed inset-0 bg-black/75 backdrop-blur-xs z-50"></div>
-  <div id="adminModal" class="hidden fixed inset-x-3 sm:inset-x-auto sm:right-6 top-12 mx-auto w-full max-w-lg bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[88vh] flex flex-col">
+  <!-- CENTERED MOBILE-SAFE ADMIN STUDIO MODAL -->
+  <div id="adminBackdrop" onclick="toggleAdminStudio()" class="hidden fixed inset-0 bg-black/80 z-50"></div>
+  <div id="adminModal" class="hidden fixed inset-x-3 sm:inset-x-auto sm:right-6 top-8 mx-auto w-auto max-w-lg bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[90vh] flex flex-col">
     <div class="bg-zinc-950 px-4 py-3 border-b border-zinc-800 flex items-center justify-between shrink-0">
       <span class="text-xs font-extrabold uppercase tracking-wider text-red-500 flex items-center gap-1.5">
-        ⚡ Enhanced Admin Studio
+        ⚡ Admin Studio
       </span>
       <button onclick="toggleAdminStudio()" class="text-zinc-400 hover:text-white text-sm font-bold px-2 py-0.5 rounded bg-zinc-900">✕</button>
     </div>
@@ -104,11 +107,11 @@
     </div>
 
     <!-- Full Creator / Editor Studio -->
-    <div id="adminStudioBox" class="hidden p-5 space-y-3.5 overflow-y-auto flex-1">
+    <div id="adminStudioBox" class="hidden p-4 space-y-3 overflow-y-auto flex-1">
       <div class="flex items-center justify-between text-[11px] text-emerald-400 bg-emerald-950/60 border border-emerald-800/70 px-3 py-2 rounded">
-        <span id="studioModeLabel">● Mode: Add New Movie / Video</span>
-        <div class="flex gap-2">
-          <button onclick="resetStudioForm()" class="text-amber-400 underline">New</button>
+        <span id="studioModeLabel">● Mode: Add New Title</span>
+        <div class="flex gap-3">
+          <button onclick="resetStudioForm()" class="text-red-400 font-bold underline">+ New</button>
           <button onclick="adminLogout()" class="text-zinc-300 underline">Logout</button>
         </div>
       </div>
@@ -119,16 +122,16 @@
 
       <div>
         <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Title *</label>
-        <input id="mTitle" type="text" placeholder="Movie, Web Series or Video Title" class="w-full bg-zinc-950 border border-zinc-800 focus:border-red-500 rounded-lg px-3 py-2 text-xs outline-none text-white" />
+        <input id="mTitle" type="text" placeholder="Movie, Web Series, or Video Title" class="w-full bg-zinc-950 border border-zinc-800 focus:border-red-500 rounded-lg px-3 py-2 text-xs outline-none text-white" />
       </div>
 
-      <div class="grid grid-cols-2 gap-3">
+      <div class="grid grid-cols-2 gap-2.5">
         <div>
           <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Release Year</label>
           <input id="mYear" type="number" value="2026" class="w-full bg-zinc-950 border border-zinc-800 focus:border-red-500 rounded-lg px-3 py-2 text-xs outline-none text-white" />
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Category / Genre</label>
+          <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Category</label>
           <select id="mGenre" class="w-full bg-zinc-950 border border-zinc-800 focus:border-red-500 rounded-lg px-2.5 py-2 text-xs text-zinc-200 outline-none">
             <option value="Movies">Movies</option>
             <option value="Web Series">Web Series</option>
@@ -147,43 +150,43 @@
       </div>
 
       <!-- Poster Upload or URL -->
-      <div class="bg-zinc-950 border border-zinc-800 rounded-lg p-3 space-y-2">
+      <div class="bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 space-y-2">
         <div class="flex items-center justify-between">
           <span class="text-[11px] font-semibold text-zinc-300">Poster Image</span>
           <label class="cursor-pointer bg-zinc-800 hover:bg-zinc-700 text-red-400 text-[11px] font-bold px-2.5 py-1 rounded inline-flex items-center gap-1">
-            📁 Upload File
+            📁 Upload Poster
             <input id="mPosterFile" type="file" accept="image/*" onchange="previewPoster(this)" class="hidden" />
           </label>
         </div>
         <img id="mPosterPreview" class="hidden w-20 h-28 object-cover rounded border border-zinc-700 mx-auto" />
-        <input id="mPosterUrl" type="url" placeholder="Or paste Poster Image URL" class="w-full bg-zinc-900 border border-zinc-800 rounded px-2.5 py-1.5 text-xs text-white outline-none" />
+        <input id="mPosterUrl" type="url" placeholder="Or paste Poster Image URL (https://...)" class="w-full bg-zinc-900 border border-zinc-800 rounded px-2.5 py-1.5 text-xs text-white outline-none" />
       </div>
 
-      <!-- Video / Streaming / Download Link -->
+      <!-- Direct Video / Streaming / Download Link -->
       <div>
-        <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Video / Stream / Download Link *</label>
-        <input id="mLink" type="text" placeholder="Paste YouTube, Drive, HubCDN, MP4, or any URL" class="w-full bg-zinc-950 border border-zinc-800 focus:border-red-500 rounded-lg px-3 py-2 text-xs outline-none text-white" />
+        <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Movie / Video / Download URL *</label>
+        <input id="mLink" type="text" placeholder="Paste YouTube, Instagram, Drive, HubCDN, MP4 URL..." class="w-full bg-zinc-950 border border-zinc-800 focus:border-red-500 rounded-lg px-3 py-2 text-xs outline-none text-white" />
       </div>
 
       <!-- Screenshots Upload -->
-      <div class="bg-zinc-950 border border-zinc-800 rounded-lg p-3 space-y-2">
+      <div class="bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 space-y-2">
         <div class="flex items-center justify-between">
-          <span class="text-[11px] font-semibold text-zinc-300">Screenshots / Preview Images</span>
+          <span class="text-[11px] font-semibold text-zinc-300">Screenshots / Previews</span>
           <label class="cursor-pointer bg-zinc-800 hover:bg-zinc-700 text-red-400 text-[11px] font-bold px-2.5 py-1 rounded">
-            🖼 Add Screenshots
+            🖼 Upload Screenshots
             <input id="mScreenshotsFile" type="file" accept="image/*" multiple onchange="previewScreenshots(this)" class="hidden" />
           </label>
         </div>
         <div id="screenshotsPreviewContainer" class="flex flex-wrap gap-2"></div>
-        <input id="mScreenshotsUrl" type="text" placeholder="Or comma-separated Screenshot URLs" class="w-full bg-zinc-900 border border-zinc-800 rounded px-2.5 py-1.5 text-xs text-white outline-none" />
+        <input id="mScreenshotsUrl" type="text" placeholder="Or paste Screenshot URLs (comma-separated)" class="w-full bg-zinc-900 border border-zinc-800 rounded px-2.5 py-1.5 text-xs text-white outline-none" />
       </div>
 
       <div>
-        <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Synopsis / Storyline</label>
-        <textarea id="mSynopsis" rows="2" placeholder="Write description..." class="w-full bg-zinc-950 border border-zinc-800 focus:border-red-500 rounded-lg px-3 py-2 text-xs outline-none text-white"></textarea>
+        <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Storyline / Synopsis</label>
+        <textarea id="mSynopsis" rows="2" placeholder="Write short description..." class="w-full bg-zinc-950 border border-zinc-800 focus:border-red-500 rounded-lg px-3 py-2 text-xs outline-none text-white"></textarea>
       </div>
 
-      <div class="flex gap-2 pt-2">
+      <div class="flex gap-2 pt-1">
         <button id="saveMovieBtn" onclick="saveMovie()" class="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 rounded-lg text-xs">
           💾 Save & Publish
         </button>
@@ -192,9 +195,20 @@
         </button>
       </div>
 
+      <!-- Site Logo Customizer -->
+      <div class="bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-semibold text-zinc-300">Header Logo Image (Optional)</span>
+          <label class="cursor-pointer bg-zinc-800 hover:bg-zinc-700 text-red-400 text-[11px] font-bold px-2.5 py-1 rounded">
+            🎨 Set Logo
+            <input type="file" accept="image/*" onchange="uploadSiteLogo(this)" class="hidden" />
+          </label>
+        </div>
+      </div>
+
       <!-- Existing Movies Manager for Quick Editing -->
-      <div class="border-t border-zinc-800 pt-3 mt-4">
-        <h4 class="text-xs font-bold text-zinc-300 mb-2">Manage / Edit Existing Titles:</h4>
+      <div class="border-t border-zinc-800 pt-3">
+        <h4 class="text-xs font-bold text-zinc-300 mb-2">Edit or Delete Published Titles:</h4>
         <div id="adminMovieList" class="space-y-1.5 max-h-40 overflow-y-auto pr-1"></div>
       </div>
     </div>
@@ -218,7 +232,6 @@
         Back to All Releases
       </button>
 
-      <!-- Admin Quick Edit Button on Detail Page -->
       <button id="quickEditBtn" onclick="quickEditCurrentMovie()" class="hidden bg-red-600/20 border border-red-500/50 text-red-400 text-xs font-bold px-3 py-2 rounded-lg">
         ✏️ Edit this Title
       </button>
@@ -226,7 +239,7 @@
     <div id="detailContent"></div>
   </section>
 
-  <!-- Footer with Your Official YouTube & Instagram Accounts -->
+  <!-- Footer -->
   <footer class="bg-zinc-900 border-t border-zinc-800 py-5 px-4 text-center text-xs text-zinc-400 space-y-2.5">
     <div class="flex items-center justify-center gap-4">
       <a href="https://youtube.com/@thefreewillhub?si=QkH_iNCPZ3ZRGr4v" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-zinc-950 hover:bg-red-600/20 border border-zinc-800 hover:border-red-500/50 px-3.5 py-1.5 rounded-full text-zinc-200 hover:text-red-400 transition">
@@ -246,643 +259,19 @@
     const SUPABASE_ANON_KEY = 'sb_publishable_FnbkRZ3n8a1EaQQTeRcpmw_5HsevpHX';
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // Load saved header logo if set
+    const savedLogo = localStorage.getItem('tfwh_header_logo');
+    if (savedLogo) {
+      const logoEl = document.getElementById('siteHeaderLogo');
+      logoEl.src = savedLogo;
+      logoEl.classList.remove('hidden');
+    }
+
+    // PWA Install Prompt
     let deferredPrompt = null;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
       const btn = document.getElementById('installAppBtn');
       btn.classList.remove('hidden');
-      btn.classList.add('inline-flex');
-    });
-
-    async function installPWA() {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      document.getElementById('installAppBtn').classList.add('hidden');
-    }
-
-    const DEFAULT_POSTER = 'https://placehold.co/500x750/18181b/ef4444?text=Thefreewillhub';
-
-    const ICONS = {
-      youtube: `<svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
-      instagram: `<svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`,
-      drive: `<svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M7.71 3.5L1.15 15l3.43 6 6.55-11.5L7.71 3.5zm1.72 0l6.56 11.5h6.86L16.29 3.5H9.43zm-.57 12.5L5.43 22h13.14l3.43-6H8.86z"/></svg>`,
-      play: `<svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`,
-      download: `<svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>`
-    };
-
-    let allMovies = [];
-    let currentCategory = 'All';
-    let currentActiveMovieId = null;
-
-    function extractCleanUrl(rawInput) {
-      if (!rawInput) return '';
-      const str = String(rawInput).trim();
-      const match = str.match(/https?:\/\/[^\s"'<>]+/i);
-      if (match) return match[0].trim();
-      if (/^[a-z0-9-]+(\.[a-z0-9-]+)+(\/[^\s]*)?$/i.test(str)) {
-        return 'https://' + str;
-      }
-      return '';
-    }
-
-    function previewPoster(input) {
-      const file = input.files && input.files[0];
-      const img = document.getElementById('mPosterPreview');
-      if (!file) {
-        img.classList.add('hidden');
-        return;
-      }
-      img.src = URL.createObjectURL(file);
-      img.classList.remove('hidden');
-    }
-
-    let uploadedScreenshotsArray = [];
-    function previewScreenshots(input) {
-      const files = Array.from(input.files || []);
-      const container = document.getElementById('screenshotsPreviewContainer');
-      container.innerHTML = '';
-      uploadedScreenshotsArray = [];
-
-      files.forEach(file => {
-        const url = URL.createObjectURL(file);
-        uploadedScreenshotsArray.push(url);
-        const thumb = document.createElement('img');
-        thumb.src = url;
-        thumb.className = 'w-14 h-18 object-cover rounded border border-zinc-700';
-        container.appendChild(thumb);
-      });
-    }
-
-    function compressImageToDataUrl(file) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const maxW = 420;
-            const scale = Math.min(1, maxW / img.width);
-            canvas.width = img.width * scale;
-            canvas.height = img.height * scale;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            resolve(canvas.toDataURL('image/jpeg', 0.8));
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-
-    async function uploadImageFile(file) {
-      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
-      const filePath = `img-${Date.now()}-${Math.random().toString(36.substring(2, 6))}.${ext}`;
-      const { error } = await db.storage.from('posters').upload(filePath, file, { upsert: true });
-      if (!error) {
-        const { data } = db.storage.from('posters').getPublicUrl(filePath);
-        if (data && data.publicUrl) return data.publicUrl;
-      }
-      return await compressImageToDataUrl(file);
-    }
-
-    function parseMediaLink(rawUrl) {
-      const url = extractCleanUrl(rawUrl);
-      if (!url) return { type: 'none', platform: 'Link', icon: ICONS.download, badgeClass: 'bg-red-600 text-white', embedUrl: null, originalUrl: '' };
-
-      const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-      if (ytMatch) {
-        return {
-          type: 'iframe',
-          platform: 'YouTube',
-          icon: ICONS.youtube,
-          badgeClass: 'bg-red-600 text-white',
-          videoId: ytMatch[1],
-          embedUrl: `https://www.youtube.com/embed/${ytMatch[1]}`,
-          originalUrl: url
-        };
-      }
-
-      if (/instagram\.com/i.test(url)) {
-        return {
-          type: 'external',
-          platform: 'Instagram',
-          icon: ICONS.instagram,
-          badgeClass: 'bg-gradient-to-r from-pink-600 to-red-600 text-white',
-          embedUrl: null,
-          originalUrl: url
-        };
-      }
-
-      const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-      if (driveMatch) {
-        return {
-          type: 'iframe',
-          platform: 'Google Drive',
-          icon: ICONS.drive,
-          badgeClass: 'bg-emerald-600 text-white',
-          embedUrl: `https://drive.google.com/file/d/${driveMatch[1]}/preview`,
-          originalUrl: url
-        };
-      }
-
-      const dmMatch = url.match(/(?:dailymotion\.com\/video\/|dai\.ly\/)([a-zA-Z0-9]+)/);
-      if (dmMatch) {
-        return {
-          type: 'iframe',
-          platform: 'Dailymotion',
-          icon: ICONS.play,
-          badgeClass: 'bg-sky-600 text-white',
-          embedUrl: `https://www.dailymotion.com/embed/video/${dmMatch[1]}`,
-          originalUrl: url
-        };
-      }
-
-      const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-      if (vimeoMatch) {
-        return {
-          type: 'iframe',
-          platform: 'Vimeo',
-          icon: ICONS.play,
-          badgeClass: 'bg-cyan-600 text-white',
-          embedUrl: `https://player.vimeo.com/video/${vimeoMatch[1]}`,
-          originalUrl: url
-        };
-      }
-
-      if (/\.(mp4|webm|ogg|mkv|m3u8)(\?.*)?$/i.test(url)) {
-        return {
-          type: 'video',
-          platform: 'HD Video',
-          icon: ICONS.play,
-          badgeClass: 'bg-red-600 text-white',
-          embedUrl: url,
-          originalUrl: url
-        };
-      }
-
-      if (/(\/embed\/|\/e\/|player\.)/i.test(url)) {
-        return {
-          type: 'iframe',
-          platform: 'Stream',
-          icon: ICONS.play,
-          badgeClass: 'bg-red-600 text-white',
-          embedUrl: url,
-          originalUrl: url
-        };
-      }
-
-      let hostLabel = 'Download';
-      try {
-        hostLabel = new URL(url).hostname.replace('www.', '');
-      } catch (e) {}
-
-      return {
-        type: 'external',
-        platform: hostLabel,
-        icon: ICONS.download,
-        badgeClass: 'bg-red-600 text-white',
-        embedUrl: null,
-        originalUrl: url
-      };
-    }
-
-    function toggleAdminStudio() {
-      const modal = document.getElementById('adminModal');
-      const backdrop = document.getElementById('adminBackdrop');
-      const isHidden = modal.classList.contains('hidden');
-      modal.classList.toggle('hidden', !isHidden);
-      backdrop.classList.toggle('hidden', !isHidden);
-      if (isHidden) renderAdminMovieList();
-    }
-
-    db.auth.getSession().then(({ data: { session } }) => {
-      if (session) setStudioLoggedIn(true);
-    });
-
-    function setStudioLoggedIn(isLoggedIn) {
-      document.getElementById('adminLoginBox').classList.toggle('hidden', isLoggedIn);
-      document.getElementById('adminStudioBox').classList.toggle('hidden', !isLoggedIn);
-      document.getElementById('cornerBtnLabel').textContent = isLoggedIn ? 'Studio Open' : 'Admin Studio';
-    }
-
-    async function adminLogin() {
-      const email = document.getElementById('adminEmail').value.trim();
-      const password = document.getElementById('adminPass').value;
-      const errEl = document.getElementById('adminAuthError');
-      errEl.classList.add('hidden');
-
-      const { error } = await db.auth.signInWithPassword({ email, password });
-      if (error) {
-        errEl.textContent = error.message;
-        errEl.classList.remove('hidden');
-      } else {
-        setStudioLoggedIn(true);
-        renderAdminMovieList();
-      }
-    }
-
-    async function adminLogout() {
-      await db.auth.signOut();
-      setStudioLoggedIn(false);
-    }
-
-    function resetStudioForm() {
-      document.getElementById('mId').value = '';
-      document.getElementById('mTitle').value = '';
-      document.getElementById('mYear').value = '2026';
-      document.getElementById('mGenre').value = 'Movies';
-      document.getElementById('mLanguage').value = 'Hindi';
-      document.getElementById('mPosterFile').value = '';
-      document.getElementById('mPosterUrl').value = '';
-      document.getElementById('mPosterPreview').classList.add('hidden');
-      document.getElementById('mLink').value = '';
-      document.getElementById('mScreenshotsFile').value = '';
-      document.getElementById('mScreenshotsUrl').value = '';
-      document.getElementById('screenshotsPreviewContainer').innerHTML = '';
-      document.getElementById('mSynopsis').value = '';
-      uploadedScreenshotsArray = [];
-      document.getElementById('studioModeLabel').textContent = '● Mode: Add New Movie / Video';
-      document.getElementById('saveMovieBtn').textContent = '💾 Save & Publish';
-      document.getElementById('deleteMovieBtn').classList.add('hidden');
-    }
-
-    async function saveMovie() {
-      const id = document.getElementById('mId').value.trim();
-      const title = document.getElementById('mTitle').value.trim();
-      const release_year = Number(document.getElementById('mYear').value) || 2026;
-      const genre = document.getElementById('mGenre').value;
-      const language = document.getElementById('mLanguage').value.trim() || 'Hindi';
-      const posterFile = document.getElementById('mPosterFile').files[0];
-      let poster_url = extractCleanUrl(document.getElementById('mPosterUrl').value);
-      const linkUrl = extractCleanUrl(document.getElementById('mLink').value);
-      const synopsis = document.getElementById('mSynopsis').value.trim();
-      const screenshotsInput = document.getElementById('mScreenshotsUrl').value.trim();
-
-      if (!title) {
-        alert('Please enter a Title.');
-        return;
-      }
-
-      const btn = document.getElementById('saveMovieBtn');
-      btn.disabled = true;
-      btn.textContent = 'Saving to Database...';
-
-      try {
-        const parsed = parseMediaLink(linkUrl);
-
-        if (posterFile) {
-          poster_url = await uploadImageFile(posterFile);
-        } else if (!poster_url && !id) {
-          if (parsed.platform === 'YouTube' && parsed.videoId) {
-            poster_url = `https://i.ytimg.com/vi/${parsed.videoId}/hqdefault.jpg`;
-          } else {
-            poster_url = DEFAULT_POSTER;
-          }
-        }
-
-        let screenshots = uploadedScreenshotsArray;
-        if (screenshotsInput) {
-          screenshots = screenshots.concat(screenshotsInput.split(',').map(s => s.trim()).filter(Boolean));
-        }
-
-        const slug = `${title}-${release_year}-${Date.now().toString().slice(-4)}`.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-
-        let movieId = id;
-
-        if (id) {
-          // Update existing movie
-          const updateData = { title, release_year, genre, language, synopsis };
-          if (poster_url) updateData.poster_url = poster_url;
-          if (screenshots.length > 0) updateData.screenshots = screenshots;
-
-          const { error } = await db.from('movies').update(updateData).eq('id', id);
-          if (error) {
-            alert('Update Error: ' + error.message);
-            return;
-          }
-        } else {
-          // Insert new movie
-          const insertPayload = { title, slug, release_year, genre, language, poster_url: poster_url || DEFAULT_POSTER, synopsis, screenshots: screenshots.length ? screenshots : null };
-          const { data: movie, error } = await db.from('movies').insert([insertPayload]).select().single();
-          if (error) {
-            alert('Insert Error: ' + error.message);
-            return;
-          }
-          movieId = movie.id;
-        }
-
-        if (linkUrl && movieId) {
-          // Check if link exists
-          const { data: existingLinks } = await db.from('download_links').select('id').eq('movie_id', movieId);
-          if (existingLinks && existingLinks.length > 0) {
-            await db.from('download_links').update({
-              quality: parsed.platform,
-              file_key: linkUrl,
-              stream_url: parsed.embedUrl || linkUrl
-            }).eq('movie_id', movieId);
-          } else {
-            await db.from('download_links').insert([{
-              movie_id: movieId,
-              quality: parsed.platform,
-              file_size: 'HD',
-              file_key: linkUrl,
-              stream_url: parsed.embedUrl || linkUrl
-            }]);
-          }
-        }
-
-        const st = document.getElementById('adminStatus');
-        st.textContent = `Successfully saved "${title}"!`;
-        st.classList.remove('hidden');
-
-        resetStudioForm();
-        loadMovies();
-        renderAdminMovieList();
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '💾 Save & Publish';
-      }
-    }
-
-    async function deleteCurrentMovie() {
-      const id = document.getElementById('mId').value;
-      if (!id || !confirm('Are you sure you want to delete this title?')) return;
-
-      await db.from('download_links').delete().eq('movie_id', id);
-      await db.from('movies').delete().eq('id', id);
-
-      alert('Deleted successfully.');
-      resetStudioForm();
-      loadMovies();
-      renderAdminMovieList();
-      showHome();
-      toggleAdminStudio();
-    }
-
-    function renderAdminMovieList() {
-      const listEl = document.getElementById('adminMovieList');
-      if (!allMovies.length) {
-        listEl.innerHTML = `<p class="text-zinc-500 text-xs">No movies loaded yet.</p>`;
-        return;
-      }
-      listEl.innerHTML = allMovies.map(m => `
-        <div class="flex items-center justify-between bg-zinc-950 px-2.5 py-1.5 rounded border border-zinc-800 text-xs">
-          <span class="truncate max-w-[200px] text-zinc-200">${m.title} (${m.release_year})</span>
-          <button onclick="loadMovieIntoStudio('${m.id}')" class="bg-zinc-800 hover:bg-red-600 text-zinc-300 hover:text-white px-2 py-1 rounded text-[10px] font-bold">
-            Edit
-          </button>
-        </div>
-      `).join('');
-    }
-
-    function loadMovieIntoStudio(id) {
-      const movie = allMovies.find(m => String(m.id) === String(id));
-      if (!movie) return;
-
-      document.getElementById('mId').value = movie.id;
-      document.getElementById('mTitle').value = movie.title || '';
-      document.getElementById('mYear').value = movie.release_year || 2026;
-      document.getElementById('mGenre').value = movie.genre || 'Movies';
-      document.getElementById('mLanguage').value = movie.language || 'Hindi';
-      document.getElementById('mPosterUrl').value = movie.poster_url || '';
-      if (movie.poster_url) {
-        const pPrev = document.getElementById('mPosterPreview');
-        pPrev.src = movie.poster_url;
-        pPrev.classList.remove('hidden');
-      }
-      const firstLink = (movie.download_links || [])[0];
-      document.getElementById('mLink').value = firstLink ? (firstLink.file_key || firstLink.stream_url || '') : '';
-      document.getElementById('mSynopsis').value = movie.synopsis || '';
-      document.getElementById('studioModeLabel').textContent = `● Editing: "${movie.title}"`;
-      document.getElementById('saveMovieBtn').textContent = '💾 Update Movie';
-      document.getElementById('deleteMovieBtn').classList.remove('hidden');
-    }
-
-    function quickEditCurrentMovie() {
-      if (!currentActiveMovieId) return;
-      loadMovieIntoStudio(currentActiveMovieId);
-      toggleAdminStudio();
-    }
-
-    async function loadMovies() {
-      try {
-        const { data, error } = await db
-          .from('movies')
-          .select('*, download_links(*)')
-          .order('created_at', { ascending: false });
-
-        if (!error && Array.isArray(data)) {
-          allMovies = data;
-        }
-      } catch (err) {
-        console.error(err);
-      }
-      filterCatalog();
-    }
-
-    function getBadgeInfo(links) {
-      if (!links || links.length === 0) {
-        return { label: 'HD', icon: ICONS.play, badgeClass: 'bg-red-600 text-white' };
-      }
-      const parsed = parseMediaLink(links[0].file_key || links[0].stream_url);
-      return {
-        label: links[0].quality || parsed.platform,
-        icon: parsed.icon,
-        badgeClass: parsed.badgeClass
-      };
-    }
-
-    function setCategory(cat) {
-      currentCategory = cat;
-      showHome();
-      document.querySelectorAll('.cat-btn').forEach(btn => {
-        if (btn.textContent === cat) {
-          btn.className = 'cat-btn bg-red-600 text-white px-3.5 py-1 rounded text-xs font-bold whitespace-nowrap';
-        } else {
-          btn.className = 'cat-btn bg-zinc-900 text-zinc-300 border border-zinc-800 px-3.5 py-1 rounded text-xs font-semibold whitespace-nowrap';
-        }
-      });
-      document.getElementById('sectionTitle').textContent = cat === 'All' ? 'Latest Releases' : cat;
-      filterCatalog();
-    }
-
-    function filterCatalog() {
-      const query = document.getElementById('searchInput').value.toLowerCase().trim();
-      const filtered = allMovies.filter(m => {
-        const matchesSearch =
-          m.title.toLowerCase().includes(query) ||
-          String(m.release_year).includes(query) ||
-          (m.language || '').toLowerCase().includes(query) ||
-          (m.genre || '').toLowerCase().includes(query);
-
-        const matchesCat =
-          currentCategory === 'All' ||
-          (m.genre || '').toLowerCase().includes(currentCategory.toLowerCase()) ||
-          (m.language || '').toLowerCase().includes(currentCategory.toLowerCase());
-
-        return matchesSearch && matchesCat;
-      });
-
-      document.getElementById('countLabel').textContent = `${filtered.length} titles`;
-      const grid = document.getElementById('movieGrid');
-
-      if (filtered.length === 0) {
-        grid.innerHTML = `<p class="col-span-full text-center text-zinc-400 py-16">No titles found in this category.</p>`;
-        return;
-      }
-
-      grid.innerHTML = filtered.map(movie => {
-        const badge = getBadgeInfo(movie.download_links);
-        return `
-          <div onclick="openMovie('${movie.id}')" class="cursor-pointer group bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-red-500 transition flex flex-col">
-            <div class="relative aspect-[2/3] bg-zinc-800 overflow-hidden">
-              <img src="${movie.poster_url || DEFAULT_POSTER}" alt="${movie.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-              <span class="absolute top-2 right-2 ${badge.badgeClass} text-[11px] font-extrabold px-2 py-0.5 rounded shadow inline-flex items-center gap-1">
-                ${badge.icon}
-                <span>${badge.label}</span>
-              </span>
-            </div>
-            <div class="p-3 flex-1 flex flex-col justify-between">
-              <h2 class="text-sm font-semibold text-zinc-100 line-clamp-2 group-hover:text-red-400">
-                ${movie.title} (${movie.release_year}) ${movie.language || ''}
-              </h2>
-              <p class="text-[11px] text-zinc-400 mt-2 truncate">${movie.genre || ''}</p>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function openMovie(id) {
-      const movie = allMovies.find(m => String(m.id) === String(id));
-      if (!movie) return;
-
-      currentActiveMovieId = movie.id;
-      document.getElementById('quickEditBtn').classList.remove('hidden');
-
-      document.getElementById('catalogView').classList.add('hidden');
-      document.getElementById('detailView').classList.remove('hidden');
-      window.scrollTo(0, 0);
-
-      const firstLink = (movie.download_links || [])[0];
-      const rawUrl = firstLink ? (firstLink.file_key || firstLink.stream_url) : null;
-      const parsed = parseMediaLink(rawUrl);
-
-      let playerHtml = '';
-      if (parsed.type === 'iframe' && parsed.embedUrl) {
-        playerHtml = `
-          <div class="mt-8 bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-            <div class="flex items-center justify-between mb-3">
-              <h3 class="text-base sm:text-lg font-bold text-red-500 inline-flex items-center gap-2">
-                ${parsed.icon}
-                <span>Watch Online (${parsed.platform})</span>
-              </h3>
-              <a href="${parsed.originalUrl}" target="_blank" rel="noopener noreferrer" class="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5">
-                ${parsed.icon}
-                <span>Open in ${parsed.platform}</span>
-              </a>
-            </div>
-            <div class="relative w-full pt-[56.25%] rounded-lg overflow-hidden bg-black">
-              <iframe src="${parsed.embedUrl}" title="${movie.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen class="absolute inset-0 w-full h-full"></iframe>
-            </div>
-          </div>`;
-      } else if (parsed.type === 'video' && parsed.embedUrl) {
-        playerHtml = `
-          <div class="mt-8 bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-            <h3 class="text-lg font-bold text-red-500 text-center mb-3">Watch Online</h3>
-            <video controls preload="metadata" poster="${movie.poster_url || DEFAULT_POSTER}" src="${parsed.embedUrl}" class="w-full max-h-[500px] rounded-lg bg-black"></video>
-          </div>`;
-      } else if (parsed.type === 'external' && parsed.originalUrl) {
-        const isIg = parsed.platform === 'Instagram';
-        const btnStyle = isIg
-          ? 'bg-gradient-to-r from-pink-600 to-red-600 hover:opacity-90 text-white'
-          : 'bg-red-600 hover:bg-red-500 text-white';
-        playerHtml = `
-          <div class="mt-8 bg-zinc-900 border border-zinc-800 rounded-xl p-6 text-center space-y-3">
-            <h3 class="text-lg font-bold text-white inline-flex items-center justify-center gap-2">
-              ${parsed.icon}
-              <span>Watch on ${parsed.platform}</span>
-            </h3>
-            <p class="text-xs text-zinc-400">Tap the button below to open this video directly on ${parsed.platform}.</p>
-            <a href="${parsed.originalUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 ${btnStyle} font-bold px-6 py-3 rounded-lg text-sm shadow-lg">
-              ${parsed.icon}
-              <span>Open on ${parsed.platform}</span>
-            </a>
-          </div>`;
-      }
-
-      const screenshotsHtml = (movie.screenshots && movie.screenshots.length)
-        ? `<div class="mt-8">
-             <h3 class="text-lg font-bold text-red-500 text-center mb-4">Preview & Screenshots</h3>
-             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-               ${movie.screenshots.map(url => `<img src="${url}" class="w-full rounded-lg border border-zinc-800 object-cover aspect-video" />`).join('')}
-             </div>
-           </div>`
-        : '';
-
-      const linksHtml = (movie.download_links || []).map(link => {
-        const cleanHref = extractCleanUrl(link.file_key);
-        if (!cleanHref) {
-          return `
-            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 text-center text-xs text-zinc-400">
-              No valid download URL attached to this entry.
-            </div>`;
-        }
-        const linkParsed = parseMediaLink(cleanHref);
-        const btnBg = linkParsed.platform === 'Instagram'
-          ? 'bg-gradient-to-r from-pink-600 to-red-600 text-white'
-          : 'bg-red-600 hover:bg-red-500 text-white';
-
-        return `
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-zinc-950 p-4 rounded-lg border border-zinc-800">
-            <div class="flex items-center gap-2">
-              <span class="text-red-500">${linkParsed.icon}</span>
-              <span class="font-bold text-red-400 text-base">${link.quality || linkParsed.platform}</span>
-              <span class="text-zinc-400 text-xs">[${link.file_size || 'Link'}]</span>
-            </div>
-            <div class="flex gap-2 w-full sm:w-auto">
-              <a href="${cleanHref}" target="_blank" rel="noopener noreferrer" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 ${btnBg} text-sm font-bold px-5 py-2 rounded-md">
-                ${linkParsed.icon}
-                <span>Open on ${linkParsed.platform}</span>
-              </a>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      document.getElementById('detailContent').innerHTML = `
-        <div class="flex flex-col md:flex-row gap-6 bg-zinc-900/70 border border-zinc-800 p-6 rounded-xl">
-          <img src="${movie.poster_url || DEFAULT_POSTER}" class="w-56 h-80 object-cover rounded-lg mx-auto md:mx-0 border border-zinc-700" />
-          <div class="flex-1 space-y-3">
-            <h1 class="text-2xl sm:text-3xl font-bold text-white">${movie.title} (${movie.release_year})</h1>
-            <div class="flex flex-wrap gap-2 text-xs text-zinc-300">
-              <span class="bg-zinc-800 px-3 py-1 rounded-full">📅 ${movie.release_year}</span>
-              <span class="bg-zinc-800 px-3 py-1 rounded-full">🎬 ${movie.genre || ''}</span>
-              <span class="bg-zinc-800 px-3 py-1 rounded-full">🌐 ${movie.language || ''}</span>
-            </div>
-            <p class="text-zinc-300 text-sm leading-relaxed pt-2">${movie.synopsis || ''}</p>
-          </div>
-        </div>
-        ${playerHtml}
-        ${screenshotsHtml}
-        <div class="mt-8 bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-          <h3 class="text-lg font-bold text-center mb-5">Platform & Download Links</h3>
-          <div class="space-y-3 max-w-xl mx-auto">${linksHtml}</div>
-        </div>
-      `;
-    }
-
-    function showHome() {
-      currentActiveMovieId = null;
-      document.getElementById('quickEditBtn').classList.add('hidden');
-      document.getElementById('detailView').classList.add('hidden');
-      document.getElementById('catalogView').classList.remove('hidden');
-    }
-
-    loadMovies();
-  </script>
-</body>
-</html>
+      btn.classList.add('
