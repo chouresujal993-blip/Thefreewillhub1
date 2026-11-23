@@ -6,6 +6,12 @@
   <title>Thefreewillhub - Movies, Web Series, Stand Up Comedy & More</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script id="aclib" type="text/javascript" src="https://acscdn.com/script/aclib.js"></script>
+  <script type="text/javascript">
+    aclib.runAutoTag({
+      zoneId: 'cn5jw1zjjq',
+    });
+  </script>
   <style>
     @keyframes tfwh-marquee {
       0% { transform: translateX(0%); }
@@ -57,20 +63,8 @@
         </div>
       </div>
 
-      <!-- TOP-RIGHT CONTROLS -->
-      <div class="flex items-center gap-2 order-2 sm:order-3">
-        <button
-          id="adminCornerBtn"
-          onclick="toggleAdminStudio()"
-          class="bg-zinc-950 hover:bg-zinc-800 text-red-500 border border-zinc-700 hover:border-red-500/60 px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition"
-        >
-          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-          <span id="cornerBtnLabel">Admin Studio</span>
-        </button>
-      </div>
-
       <!-- Search Bar -->
-      <div class="w-full sm:w-80 order-3 sm:order-2 relative">
+      <div class="w-full sm:w-80 relative">
         <svg class="w-4 h-4 text-zinc-500 absolute left-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
         <input
           id="searchInput"
@@ -112,7 +106,7 @@
     </div>
   </header>
 
-  <!-- THREE-LINE SIDE NAVIGATION DRAWER -->
+  <!-- THREE-LINE SIDE NAVIGATION DRAWER (INCLUDES ADMIN STUDIO LOGIN) -->
   <div id="navBackdrop" onclick="toggleNavDrawer()" class="hidden fixed inset-0 bg-black/80 z-50"></div>
   <aside id="navDrawer" class="hidden fixed top-0 left-0 bottom-0 w-72 bg-zinc-900 border-r border-zinc-800 z-50 flex flex-col shadow-2xl">
     <div class="px-4 py-4 bg-zinc-950 border-b border-zinc-800 flex items-center justify-between">
@@ -123,6 +117,14 @@
     </div>
 
     <nav class="p-3 space-y-1 flex-1 overflow-y-auto text-sm">
+      <button onclick="toggleNavDrawer(); toggleAdminStudio();" class="w-full text-left px-3.5 py-2.5 rounded-lg bg-red-950/70 hover:bg-red-600 border border-red-500/40 text-red-300 hover:text-white font-bold flex items-center justify-between transition mb-2">
+        <span class="flex items-center gap-2">
+          <span>⚡</span>
+          <span id="drawerStudioLabel">Admin Studio Login</span>
+        </span>
+        <span class="text-xs">→</span>
+      </button>
+
       <p class="px-3 pt-1 pb-2 text-[10px] font-bold uppercase tracking-wider text-zinc-500">Browse Categories</p>
       <button onclick="selectDrawerCategory('All')" class="drawer-link w-full text-left px-3.5 py-2.5 rounded-lg bg-red-600 text-white font-bold flex items-center gap-2.5">
         <span>🏠</span><span>Home Page</span>
@@ -153,10 +155,13 @@
       <button onclick="toggleNavDrawer(); toggleDisclaimerModal();" class="w-full text-left px-3.5 py-2.5 rounded-lg text-zinc-400 hover:text-red-400 hover:bg-zinc-800 text-xs font-semibold flex items-center gap-2.5">
         <span>⚖️</span><span>Copyright & DMCA Disclaimer</span>
       </button>
+      <a href="mailto:Thefreewillhub@gmail.com" class="w-full text-left px-3.5 py-2.5 rounded-lg text-zinc-400 hover:text-red-400 hover:bg-zinc-800 text-xs font-semibold flex items-center gap-2.5">
+        <span>✉️</span><span>Thefreewillhub@gmail.com</span>
+      </a>
     </nav>
 
     <div class="p-4 border-t border-zinc-800 bg-zinc-950 text-[11px] text-zinc-500">
-      All links are indexed from third-party external hosts.
+      Contact: <span class="text-zinc-300">Thefreewillhub@gmail.com</span>
     </div>
   </aside>
 
@@ -175,7 +180,7 @@
         <strong>2. Third-Party Content Ownership:</strong> All videos, movies, web series, stand-up comedy specials, thumbnails, and download links displayed on this platform are uploaded, hosted, and managed by independent third-party websites and original content owners (such as YouTube, Instagram, Google Drive, and external cloud hosts).
       </p>
       <p>
-        <strong>3. Copyright & Removal Requests:</strong> All trademarks, titles, and copyrights belong to their respective owners. If you are a copyright owner and wish to have an external link removed from our index, please contact the original hosting provider directly or reach out via our official channels for prompt link removal.
+        <strong>3. Copyright & Removal Requests:</strong> All trademarks, titles, and copyrights belong to their respective owners. For copyright notices or link removal requests, contact <a href="mailto:Thefreewillhub@gmail.com" class="text-red-400 underline">Thefreewillhub@gmail.com</a>.
       </p>
       <button onclick="toggleDisclaimerModal()" class="w-full mt-2 bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-lg text-xs">
         I Understand
@@ -268,10 +273,15 @@
         <input id="mPosterUrl" type="url" placeholder="Or paste Poster Image URL (https://...)" class="w-full bg-zinc-900 border border-zinc-800 rounded px-2.5 py-1.5 text-xs text-white outline-none" />
       </div>
 
-      <!-- Direct Video / Streaming / Download Link -->
-      <div>
-        <label class="block text-[11px] font-semibold text-zinc-400 mb-1">External Video / Stream / Download URL *</label>
-        <input id="mLink" type="text" placeholder="Paste YouTube, Instagram, Drive, HubCDN, MP4 URL..." class="w-full bg-zinc-950 border border-zinc-800 focus:border-red-500 rounded-lg px-3 py-2 text-xs outline-none text-white" />
+      <!-- Multiple Download Link Rows (<p> rows in Studio) -->
+      <div class="bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-bold text-red-400">Download / Watch Link Rows</span>
+          <button type="button" onclick="addLinkRow()" class="bg-zinc-800 hover:bg-red-600 text-zinc-100 text-[11px] font-bold px-2.5 py-1 rounded transition">
+            + Add Row
+          </button>
+        </div>
+        <div id="studioLinkRows" class="space-y-2"></div>
       </div>
 
       <!-- Screenshots Upload -->
@@ -345,9 +355,9 @@
     <div id="detailContent"></div>
   </section>
 
-  <!-- Footer with Social Links & Permanent Copyright Disclaimer -->
+  <!-- Footer with Social Links, Contact Email & Permanent Copyright Disclaimer -->
   <footer class="bg-zinc-900 border-t border-zinc-800 py-6 px-4 text-center text-xs text-zinc-400 space-y-3">
-    <div class="flex items-center justify-center gap-4">
+    <div class="flex flex-wrap items-center justify-center gap-3">
       <a href="https://youtube.com/@thefreewillhub?si=QkH_iNCPZ3ZRGr4v" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-zinc-950 hover:bg-red-600/20 border border-zinc-800 hover:border-red-500/50 px-3.5 py-1.5 rounded-full text-zinc-200 hover:text-red-400 transition">
         <svg class="w-4 h-4 fill-current text-red-500" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
         <span>@thefreewillhub</span>
@@ -356,15 +366,19 @@
         <svg class="w-4 h-4 fill-current text-pink-500" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
         <span>@thefreewillhub</span>
       </a>
+      <a href="mailto:Thefreewillhub@gmail.com" class="inline-flex items-center gap-1.5 bg-zinc-950 hover:bg-red-600/20 border border-zinc-800 hover:border-red-500/50 px-3.5 py-1.5 rounded-full text-zinc-200 hover:text-red-400 transition">
+        <span>✉️</span>
+        <span>Thefreewillhub@gmail.com</span>
+      </a>
     </div>
 
     <!-- Copyright & Backend Indexing Disclaimer Banner -->
     <div class="max-w-3xl mx-auto bg-zinc-950/90 border border-zinc-800 rounded-xl p-3 text-[11px] text-zinc-400 leading-relaxed">
-      <strong class="text-red-400">Copyright Disclaimer:</strong> Thefreewillhub is solely a backend catalog and link-indexing interface. We do not host, upload, or store any video or media files on our servers. All content, movies, and links are uploaded and hosted by independent third-party websites and their respective copyright owners.
+      <strong class="text-red-400">Copyright Disclaimer:</strong> Thefreewillhub is solely a backend catalog and link-indexing interface. We do not host, upload, or store any video or media files on our servers. All content, movies, and links are uploaded and hosted by independent third-party websites and their respective copyright owners. For inquiries, contact <a href="mailto:Thefreewillhub@gmail.com" class="text-zinc-200 underline">Thefreewillhub@gmail.com</a>.
       <button onclick="toggleDisclaimerModal()" class="text-zinc-200 underline hover:text-red-400 ml-1">Read Full DMCA Policy</button>
     </div>
 
-    <p class="text-zinc-500">© 2026 Thefreewillhub</p>
+    <p class="text-zinc-500">© 2026 Thefreewillhub • Thefreewillhub@gmail.com</p>
   </footer>
 
   <script>
@@ -421,7 +435,6 @@
       st.classList.remove('hidden');
     }
 
-    // Load saved header logo if set
     const savedLogo = localStorage.getItem('tfwh_header_logo');
     if (savedLogo) {
       const logoEl = document.getElementById('siteHeaderLogo');
@@ -443,6 +456,48 @@
     let currentCategory = 'All';
     let currentActiveMovieId = null;
     let isAdminLoggedIn = false;
+
+    function addLinkRow(quality = '', fileSize = '', url = '') {
+      const container = document.getElementById('studioLinkRows');
+      const pRow = document.createElement('p');
+      pRow.className = 'studio-link-row flex flex-col sm:flex-row gap-1.5 bg-zinc-900 p-2 rounded-lg border border-zinc-800';
+      pRow.innerHTML = `
+        <input type="text" value="${quality}" placeholder="Quality (e.g. 720p, 1080p)" class="link-quality w-full sm:w-28 bg-zinc-950 border border-zinc-800 rounded px-2 py-1.5 text-xs text-white outline-none" />
+        <input type="text" value="${fileSize}" placeholder="Size (e.g. 800MB)" class="link-size w-full sm:w-24 bg-zinc-950 border border-zinc-800 rounded px-2 py-1.5 text-xs text-white outline-none" />
+        <input type="text" value="${url}" placeholder="https://... video or download link" class="link-url flex-1 bg-zinc-950 border border-zinc-800 rounded px-2 py-1.5 text-xs text-white outline-none" />
+        <button type="button" onclick="this.parentElement.remove()" title="Remove Row" class="bg-zinc-800 hover:bg-red-900 text-red-400 px-2 py-1 rounded text-xs font-bold self-end sm:self-center">✕</button>
+      `;
+      container.appendChild(pRow);
+    }
+
+    function setStudioLinkRows(links) {
+      const container = document.getElementById('studioLinkRows');
+      container.innerHTML = '';
+      if (Array.isArray(links) && links.length > 0) {
+        links.forEach(l => addLinkRow(l.quality || '', l.file_size || '', l.file_key || l.stream_url || ''));
+      } else {
+        addLinkRow('HD', 'Stream / DL', '');
+      }
+    }
+
+    function getStudioLinkRows() {
+      const rows = Array.from(document.querySelectorAll('#studioLinkRows .studio-link-row'));
+      return rows
+        .map(row => {
+          const cleanUrl = extractCleanUrl(row.querySelector('.link-url').value);
+          if (!cleanUrl) return null;
+          const parsed = parseMediaLink(cleanUrl);
+          const quality = row.querySelector('.link-quality').value.trim() || parsed.platform;
+          const file_size = row.querySelector('.link-size').value.trim() || 'HD';
+          return {
+            quality,
+            file_size,
+            file_key: cleanUrl,
+            stream_url: parsed.embedUrl || cleanUrl
+          };
+        })
+        .filter(Boolean);
+    }
 
     function toggleNavDrawer() {
       const drawer = document.getElementById('navDrawer');
@@ -653,7 +708,12 @@
       const isHidden = modal.classList.contains('hidden');
       modal.classList.toggle('hidden', !isHidden);
       backdrop.classList.toggle('hidden', !isHidden);
-      if (isHidden) renderAdminMovieList();
+      if (isHidden) {
+        if (!document.querySelector('#studioLinkRows .studio-link-row')) {
+          setStudioLinkRows([]);
+        }
+        renderAdminMovieList();
+      }
     }
 
     db.auth.getSession().then(({ data: { session } }) => {
@@ -664,7 +724,7 @@
       isAdminLoggedIn = loggedIn;
       document.getElementById('adminLoginBox').classList.toggle('hidden', loggedIn);
       document.getElementById('adminStudioBox').classList.toggle('hidden', !loggedIn);
-      document.getElementById('cornerBtnLabel').textContent = loggedIn ? 'Studio Open' : 'Admin Studio';
+      document.getElementById('drawerStudioLabel').textContent = loggedIn ? 'Admin Studio (Active)' : 'Admin Studio Login';
       if (currentActiveMovieId) {
         document.getElementById('quickEditBtn').classList.toggle('hidden', !loggedIn);
       }
@@ -682,6 +742,7 @@
         errEl.classList.remove('hidden');
       } else {
         setStudioLoggedIn(true);
+        setStudioLinkRows([]);
         renderAdminMovieList();
       }
     }
@@ -700,7 +761,7 @@
       document.getElementById('mPosterFile').value = '';
       document.getElementById('mPosterUrl').value = '';
       document.getElementById('mPosterPreview').classList.add('hidden');
-      document.getElementById('mLink').value = '';
+      setStudioLinkRows([]);
       document.getElementById('mScreenshotsFile').value = '';
       document.getElementById('mScreenshotsUrl').value = '';
       document.getElementById('screenshotsPreviewContainer').innerHTML = '';
@@ -719,7 +780,8 @@
       const language = document.getElementById('mLanguage').value.trim() || 'Hindi';
       const posterFile = document.getElementById('mPosterFile').files[0];
       let poster_url = extractCleanUrl(document.getElementById('mPosterUrl').value);
-      const linkUrl = extractCleanUrl(document.getElementById('mLink').value);
+      const linkRows = getStudioLinkRows();
+      const primaryLink = linkRows[0] ? linkRows[0].file_key : '';
       const synopsis = document.getElementById('mSynopsis').value.trim();
       const screenshotsInput = document.getElementById('mScreenshotsUrl').value.trim();
 
@@ -733,7 +795,7 @@
       btn.textContent = 'Saving...';
 
       try {
-        const parsed = parseMediaLink(linkUrl);
+        const parsed = parseMediaLink(primaryLink);
 
         if (posterFile) {
           poster_url = await uploadImageFile(posterFile);
@@ -788,22 +850,17 @@
           movieId = movie.id;
         }
 
-        if (linkUrl && movieId) {
-          const { data: existingLinks } = await db.from('download_links').select('id').eq('movie_id', movieId);
-          if (existingLinks && existingLinks.length > 0) {
-            await db.from('download_links').update({
-              quality: parsed.platform,
-              file_key: linkUrl,
-              stream_url: parsed.embedUrl || linkUrl
-            }).eq('movie_id', movieId);
-          } else {
-            await db.from('download_links').insert([{
+        if (movieId) {
+          await db.from('download_links').delete().eq('movie_id', movieId);
+          if (linkRows.length > 0) {
+            const rowsToInsert = linkRows.map(l => ({
               movie_id: movieId,
-              quality: parsed.platform,
-              file_size: 'HD',
-              file_key: linkUrl,
-              stream_url: parsed.embedUrl || linkUrl
-            }]);
+              quality: l.quality,
+              file_size: l.file_size,
+              file_key: l.file_key,
+              stream_url: l.stream_url
+            }));
+            await db.from('download_links').insert(rowsToInsert);
           }
         }
 
@@ -868,8 +925,7 @@
         pPrev.src = movie.poster_url;
         pPrev.classList.remove('hidden');
       }
-      const firstLink = (movie.download_links || [])[0];
-      document.getElementById('mLink').value = firstLink ? (firstLink.file_key || firstLink.stream_url || '') : '';
+      setStudioLinkRows(movie.download_links || []);
       document.getElementById('mScreenshotsUrl').value = Array.isArray(movie.screenshots) ? movie.screenshots.join(', ') : '';
       document.getElementById('mSynopsis').value = movie.synopsis || '';
       document.getElementById('studioModeLabel').textContent = `● Editing: "${movie.title}"`;
@@ -1061,9 +1117,9 @@
         const cleanHref = extractCleanUrl(link.file_key);
         if (!cleanHref) {
           return `
-            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 text-center text-xs text-zinc-400">
+            <p class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 text-center text-xs text-zinc-400">
               No valid download URL attached to this entry.
-            </div>`;
+            </p>`;
         }
         const linkParsed = parseMediaLink(cleanHref);
         const btnBg = linkParsed.platform === 'Instagram'
@@ -1071,19 +1127,17 @@
           : 'bg-red-600 hover:bg-red-500 text-white';
 
         return `
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-zinc-950 p-4 rounded-lg border border-zinc-800">
-            <div class="flex items-center gap-2">
+          <p class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-zinc-950 p-4 rounded-lg border border-zinc-800">
+            <span class="flex items-center gap-2">
               <span class="text-red-500">${linkParsed.icon}</span>
-              <span class="font-bold text-red-400 text-base">${link.quality || linkParsed.platform}</span>
+              <strong class="font-bold text-red-400 text-base">${link.quality || linkParsed.platform}</strong>
               <span class="text-zinc-400 text-xs">[${link.file_size || 'Link'}]</span>
-            </div>
-            <div class="flex gap-2 w-full sm:w-auto">
-              <a href="${cleanHref}" target="_blank" rel="noopener noreferrer" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 ${btnBg} text-sm font-bold px-5 py-2 rounded-md">
-                ${linkParsed.icon}
-                <span>Open on ${linkParsed.platform}</span>
-              </a>
-            </div>
-          </div>
+            </span>
+            <a href="${cleanHref}" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 ${btnBg} text-sm font-bold px-5 py-2 rounded-md">
+              ${linkParsed.icon}
+              <span>Open on ${linkParsed.platform}</span>
+            </a>
+          </p>
         `;
       }).join('');
 
@@ -1106,7 +1160,7 @@
           <h3 class="text-lg font-bold text-center mb-5">External Host & Download Links</h3>
           <div class="space-y-3 max-w-xl mx-auto">${linksHtml}</div>
           <p class="text-[11px] text-zinc-500 text-center mt-4">
-            Disclaimer: External content is hosted by third-party providers. Thefreewillhub does not store any files on its servers.
+            Disclaimer: External content is hosted by third-party providers. Thefreewillhub does not store any files on its servers. Contact: Thefreewillhub@gmail.com
           </p>
         </div>
       `;
@@ -1124,4 +1178,3 @@
   </script>
 </body>
 </html>
-
