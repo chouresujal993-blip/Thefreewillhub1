@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Thefreewillhub - Movies, Web Series, Stand Up Comedy & More</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="apple-touch-icon" href="/logo.png" />
+  <meta name="theme-color" content="#dc2626" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Thefreewillhub" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script id="aclib" type="text/javascript" src="https://acscdn.com/script/aclib.js"></script>
@@ -46,7 +54,7 @@
         </button>
 
         <a href="#" onclick="setCategory('All'); return false;" class="flex items-center gap-2">
-          <img id="siteHeaderLogo" src="" alt="" class="hidden w-8 h-8 rounded-lg object-cover border border-zinc-700" />
+          <img id="siteHeaderLogo" src="/logo.png" onerror="this.classList.add('hidden')" alt="Thefreewillhub Logo" class="w-8 h-8 rounded-full object-cover border border-red-500/50" />
           <span class="text-xl sm:text-2xl font-extrabold tracking-tight">
             THEFREEWILL<span class="text-red-500">HUB</span>
           </span>
@@ -106,18 +114,31 @@
     </div>
   </header>
 
-  <!-- THREE-LINE SIDE NAVIGATION DRAWER (INCLUDES ADMIN STUDIO LOGIN) -->
+  <!-- THREE-LINE SIDE NAVIGATION DRAWER (INCLUDES INSTALL APK & ADMIN STUDIO LOGIN) -->
   <div id="navBackdrop" onclick="toggleNavDrawer()" class="hidden fixed inset-0 bg-black/80 z-50"></div>
   <aside id="navDrawer" class="hidden fixed top-0 left-0 bottom-0 w-72 bg-zinc-900 border-r border-zinc-800 z-50 flex flex-col shadow-2xl">
     <div class="px-4 py-4 bg-zinc-950 border-b border-zinc-800 flex items-center justify-between">
-      <span class="text-base font-extrabold tracking-tight">
-        THEFREEWILL<span class="text-red-500">HUB</span>
-      </span>
+      <div class="flex items-center gap-2">
+        <img id="drawerLogoImg" src="/logo.png" onerror="this.classList.add('hidden')" alt="Logo" class="w-7 h-7 rounded-full object-cover border border-red-500/50" />
+        <span class="text-base font-extrabold tracking-tight">
+          THEFREEWILL<span class="text-red-500">HUB</span>
+        </span>
+      </div>
       <button onclick="toggleNavDrawer()" class="text-zinc-400 hover:text-white bg-zinc-900 px-2.5 py-1 rounded text-sm font-bold">✕</button>
     </div>
 
     <nav class="p-3 space-y-1 flex-1 overflow-y-auto text-sm">
-      <button onclick="toggleNavDrawer(); toggleAdminStudio();" class="w-full text-left px-3.5 py-2.5 rounded-lg bg-red-950/70 hover:bg-red-600 border border-red-500/40 text-red-300 hover:text-white font-bold flex items-center justify-between transition mb-2">
+      <!-- Install App / APK Option in Three-Line Menu -->
+      <button onclick="installPWA()" class="w-full text-left px-3.5 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-extrabold flex items-center justify-between shadow transition mb-1.5">
+        <span class="flex items-center gap-2.5">
+          <img id="drawerInstallIcon" src="/logo.png" onerror="this.style.display='none'" alt="" class="w-5 h-5 rounded-full object-cover border border-white/40" />
+          <span>Install App (APK)</span>
+        </span>
+        <span class="text-xs bg-black/30 px-2 py-0.5 rounded">GET</span>
+      </button>
+
+      <!-- Admin Studio Login Option in Three-Line Menu -->
+      <button onclick="toggleNavDrawer(); toggleAdminStudio();" class="w-full text-left px-3.5 py-2.5 rounded-lg bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 hover:border-red-500/50 text-red-400 font-bold flex items-center justify-between transition mb-2">
         <span class="flex items-center gap-2">
           <span>⚡</span>
           <span id="drawerStudioLabel">Admin Studio Login</span>
@@ -314,7 +335,7 @@
       <!-- Site Logo Customizer -->
       <div class="bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 space-y-2">
         <div class="flex items-center justify-between">
-          <span class="text-[11px] font-semibold text-zinc-300">Header Logo Image (Optional)</span>
+          <span class="text-[11px] font-semibold text-zinc-300">Header & App Logo Image</span>
           <label class="cursor-pointer bg-zinc-800 hover:bg-zinc-700 text-red-400 text-[11px] font-bold px-2.5 py-1 rounded">
             🎨 Set Logo
             <input type="file" accept="image/*" onchange="uploadSiteLogo(this)" class="hidden" />
@@ -386,6 +407,24 @@
     const SUPABASE_ANON_KEY = 'sb_publishable_FnbkRZ3n8a1EaQQTeRcpmw_5HsevpHX';
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // PWA / APK Install Prompt Handler (Triggered from Three-Line Drawer)
+    let deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+    });
+
+    async function installPWA() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        toggleNavDrawer();
+      } else {
+        alert('To install Thefreewillhub App with its logo on your home screen:\n\n1. Tap your browser menu (⋮ in Chrome or Share in Safari).\n2. Select "Install app" or "Add to Home screen".');
+      }
+    }
+
     const DEFAULT_NOTICE = 'Welcome to Thefreewillhub — Explore Movies, Web Series, Stand Up Comedy, Animated & Tamil Movies!';
 
     function renderNotificationMarquee(text) {
@@ -435,12 +474,19 @@
       st.classList.remove('hidden');
     }
 
-    const savedLogo = localStorage.getItem('tfwh_header_logo');
-    if (savedLogo) {
-      const logoEl = document.getElementById('siteHeaderLogo');
-      logoEl.src = savedLogo;
-      logoEl.classList.remove('hidden');
+    function applyLogoSrc(src) {
+      ['siteHeaderLogo', 'drawerLogoImg', 'drawerInstallIcon'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.src = src;
+          el.classList.remove('hidden');
+          el.style.display = '';
+        }
+      });
     }
+
+    const savedLogo = localStorage.getItem('tfwh_header_logo');
+    if (savedLogo) applyLogoSrc(savedLogo);
 
     const DEFAULT_POSTER = 'https://placehold.co/500x750/18181b/ef4444?text=Thefreewillhub';
 
@@ -595,10 +641,8 @@
       if (!file) return;
       const logoUrl = await uploadImageFile(file);
       localStorage.setItem('tfwh_header_logo', logoUrl);
-      const logoEl = document.getElementById('siteHeaderLogo');
-      logoEl.src = logoUrl;
-      logoEl.classList.remove('hidden');
-      alert('Header logo updated!');
+      applyLogoSrc(logoUrl);
+      alert('Header & App logo updated!');
     }
 
     function parseMediaLink(rawUrl) {
